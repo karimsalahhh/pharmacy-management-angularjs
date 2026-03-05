@@ -1,0 +1,68 @@
+<div>
+  <h2>Medicines</h2>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="mb-3">Add Medicine</h5>
+
+      <div class="row g-2">
+        <div class="col-md-4">
+          <input
+            class="form-control"
+            placeholder="Name"
+            ng-model="newMed.name"
+          />
+        </div>
+
+        <div class="col-md-2">
+          <input
+            class="form-control"
+            type="number"
+            placeholder="Price"
+            ng-model="newMed.price"
+          />
+        </div>
+
+        <div class="col-md-2">
+          <input
+            class="form-control"
+            type="number"
+            placeholder="Stock"
+            ng-model="newMed.stock"
+          />
+        </div>
+
+        <div class="col-md-3">
+          <input
+            class="form-control"
+            type="date"
+            ng-model="newMed.expiry_date"
+          />
+        </div>
+
+        <div class="col-md-1 d-grid">
+          <button class="btn btn-primary" ng-click="addMed()">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Expiry Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="m in medicines">
+        <td>{{ m.name }}</td>
+        <td>{{ m.price }}</td>
+        <td>{{ m.stock }}</td>
+        <td>{{ m.expiry_date }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
