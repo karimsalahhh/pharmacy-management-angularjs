@@ -1,23 +1,236 @@
-<!-- controller is wired through the route; ng-controller is optional but kept for clarity -->
-<div ng-controller="MedicineController">
-  <h2>Medicines</h2>
+<div class="container-fluid">
+  <div class="mb-4">
+    <h2 class="fw-bold mb-1">Medicines</h2>
+    <p class="text-muted mb-0">Add, edit, and manage medicines</p>
+  </div>
 
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Item</th>
-        <th>Price</th>
-        <th>Stock</th>
-        <th>Expiry Date</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="m in medicines">
-        <td>{{ m.name }}</td>
-        <td>{{ m.price }}</td>
-        <td>{{ m.stock }}</td>
-        <td>{{ m.expiry_date }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="row g-4">
+    <!-- Form -->
+    <div class="col-12 col-lg-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h4 class="mb-3">
+            {{ isEditMode ? 'Edit Medicine' : 'Add Medicine' }}
+          </h4>
+
+          <div class="alert alert-danger" ng-if="errorMessage">
+            {{ errorMessage }}
+          </div>
+
+          <div class="alert alert-success" ng-if="successMessage">
+            {{ successMessage }}
+          </div>
+
+          <form
+            name="medicineForm"
+            ng-submit="saveMedicine(medicineForm)"
+            novalidate
+          >
+            <div class="mb-3">
+              <label class="form-label">Name</label>
+              <input
+                type="text"
+                name="name"
+                class="form-control"
+                ng-model="selectedMedicine.name"
+                placeholder="Enter medicine name"
+                required
+                minlength="2"
+                maxlength="100"
+                ng-class="{'is-invalid': medicineForm.name.$invalid && medicineForm.name.$touched}"
+              />
+              <small
+                class="text-danger"
+                ng-show="medicineForm.name.$error.required && medicineForm.name.$touched"
+                >Name is required.</small
+              >
+              <small
+                class="text-danger"
+                ng-show="medicineForm.name.$error.minlength && medicineForm.name.$touched"
+                >Name must be at least 2 characters.</small
+              >
+              <small
+                class="text-danger"
+                ng-show="medicineForm.name.$error.maxlength && medicineForm.name.$touched"
+                >Name must be less than 100 characters.</small
+              >
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Price</label>
+              <input
+                type="number"
+                name="price"
+                class="form-control"
+                ng-model="selectedMedicine.price"
+                placeholder="Enter price"
+                required
+                min="0"
+                step="0.01"
+                ng-class="{'is-invalid': medicineForm.price.$invalid && medicineForm.price.$touched}"
+              />
+              <small
+                class="text-danger"
+                ng-show="medicineForm.price.$error.required && medicineForm.price.$touched"
+                >Price is required.</small
+              >
+              <small
+                class="text-danger"
+                ng-show="medicineForm.price.$error.number && medicineForm.price.$touched"
+                >Price must be a number.</small
+              >
+              <small
+                class="text-danger"
+                ng-show="medicineForm.price.$error.min && medicineForm.price.$touched"
+                >Price must be greater than or equal to 0.</small
+              >
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Stock</label>
+              <input
+                type="number"
+                name="stock"
+                class="form-control"
+                ng-model="selectedMedicine.stock"
+                placeholder="Enter stock"
+                required
+                min="0"
+                ng-class="{'is-invalid': medicineForm.stock.$invalid && medicineForm.stock.$touched}"
+              />
+              <small
+                class="text-danger"
+                ng-show="medicineForm.stock.$error.required && medicineForm.stock.$touched"
+                >Stock is required.</small
+              >
+              <small
+                class="text-danger"
+                ng-show="medicineForm.stock.$error.number && medicineForm.stock.$touched"
+                >Stock must be a number.</small
+              >
+              <small
+                class="text-danger"
+                ng-show="medicineForm.stock.$error.min && medicineForm.stock.$touched"
+                >Stock must be greater than or equal to 0.</small
+              >
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Expiry Date</label>
+              <input
+                type="date"
+                name="expiry"
+                class="form-control"
+                ng-model="selectedMedicine.expiry_date"
+                required
+                ng-class="{'is-invalid': medicineForm.expiry.$invalid && medicineForm.expiry.$touched}"
+              />
+              <small
+                class="text-danger"
+                ng-show="medicineForm.expiry.$error.required && medicineForm.expiry.$touched"
+                >Expiry date is required.</small
+              >
+              <small class="text-danger" ng-show="expiryError"
+                >{{ expiryError }}</small
+              >
+            </div>
+
+            <div class="d-flex gap-2">
+              <button
+                type="submit"
+                class="btn btn-primary w-100"
+                ng-disabled="!medicineForm.$valid"
+              >
+                {{ isEditMode ? 'Update' : 'Add' }}
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-secondary"
+                ng-click="resetForm()"
+              >
+                Clear
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="col-12 col-lg-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">Medicines List</h4>
+            <span class="badge text-bg-dark">{{ medicines.length }} Items</span>
+          </div>
+
+          <div class="text-center py-4" ng-if="loading">
+            <div class="spinner-border text-primary mb-2"></div>
+            <p class="mb-0">Loading medicines...</p>
+          </div>
+
+          <div class="table-responsive" ng-if="!loading">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Expiry Date</th>
+                  <th>Status</th>
+                  <th style="width: 140px">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="med in medicines track by med.id">
+                  <td>{{ $index + 1 }}</td>
+                  <td>{{ med.name }}</td>
+                  <td>{{ med.price }}</td>
+                  <td>{{ med.stock }}</td>
+                  <td>{{ med.expiry_date | date:'yyyy-MM-dd' }}</td>
+                  <td>
+                    <span
+                      class="badge"
+                      ng-class="{
+                        'text-bg-danger': getStockStatus(med.stock) === 'Out of Stock',
+                        'text-bg-warning': getStockStatus(med.stock) === 'Low Stock',
+                        'text-bg-success': getStockStatus(med.stock) === 'Available'
+                      }"
+                    >
+                      {{ getStockStatus(med.stock) }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="d-flex gap-2">
+                      <button
+                        class="btn btn-sm btn-warning"
+                        ng-click="editMedicine(med)"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        class="btn btn-sm btn-danger"
+                        ng-click="deleteMedicine(med.id)"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr ng-if="medicines.length === 0">
+                  <td colspan="7" class="text-center text-muted py-4">
+                    No medicines found.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

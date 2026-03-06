@@ -1,4 +1,256 @@
-<div>
-  <h2>Welcome to the Pharmacy Dashboard</h2>
-  <p>Select a section from the navigation bar to begin.</p>
+<div class="container-fluid">
+  <div class="mb-4">
+    <h2 class="fw-bold mb-1">Dashboard</h2>
+    <p class="text-muted mb-0">Pharmacy system overview</p>
+  </div>
+
+  <!-- Top Cards -->
+  <div class="row g-4 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card dashboard-card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <p class="text-muted mb-2">Total Medicines</p>
+              <h3 class="fw-bold mb-0">{{ totalMedicines }}</h3>
+            </div>
+            <span class="dashboard-icon bg-primary-subtle text-primary">
+              <i class="bi bi-capsule-pill"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card dashboard-card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <p class="text-muted mb-2">Low Stock</p>
+              <h3 class="fw-bold mb-0">{{ lowStockCount }}</h3>
+            </div>
+            <span class="dashboard-icon bg-warning-subtle text-warning">
+              <i class="bi bi-exclamation-triangle"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card dashboard-card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <p class="text-muted mb-2">Out of Stock</p>
+              <h3 class="fw-bold mb-0">{{ outOfStockCount }}</h3>
+            </div>
+            <span class="dashboard-icon bg-danger-subtle text-danger">
+              <i class="bi bi-x-circle"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card dashboard-card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <p class="text-muted mb-2">Expiring Soon</p>
+              <h3 class="fw-bold mb-0">{{ expiringSoonCount }}</h3>
+            </div>
+            <span class="dashboard-icon bg-success-subtle text-success">
+              <i class="bi bi-clock-history"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions + Inventory Overview -->
+  <div class="row g-4 mb-4">
+    <div class="col-12 col-lg-5">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <h4 class="mb-3">Quick Actions</h4>
+          <div class="row g-3">
+            <div class="col-12 col-sm-6">
+              <a href="#!/medicines" class="btn btn-primary w-100 py-3">
+                <i class="bi bi-plus-circle me-2"></i>
+                Manage Medicines
+              </a>
+            </div>
+            <div class="col-12 col-sm-6">
+              <a
+                href="#!/productSearch"
+                class="btn btn-outline-dark w-100 py-3"
+              >
+                <i class="bi bi-search me-2"></i>
+                Search Products
+              </a>
+            </div>
+            <div class="col-12 col-sm-6">
+              <a
+                href="#!/statistics"
+                class="btn btn-outline-primary w-100 py-3"
+              >
+                <i class="bi bi-bar-chart-line me-2"></i>
+                View Statistics
+              </a>
+            </div>
+            <div class="col-12 col-sm-6">
+              <button class="btn btn-outline-secondary w-100 py-3" disabled>
+                <i class="bi bi-bell me-2"></i>
+                Coming Soon!
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-7">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <h4 class="mb-4">Inventory Overview</h4>
+
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+              <span>Available</span>
+              <span>{{ availableCount }}</span>
+            </div>
+            <div class="progress" style="height: 10px">
+              <div
+                class="progress-bar bg-success"
+                role="progressbar"
+                ng-style="{'width': totalMedicines ? ((availableCount / totalMedicines) * 100) + '%' : '0%'}"
+              ></div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+              <span>Low Stock</span>
+              <span>{{ lowStockCount }}</span>
+            </div>
+            <div class="progress" style="height: 10px">
+              <div
+                class="progress-bar bg-warning"
+                role="progressbar"
+                ng-style="{'width': totalMedicines ? ((lowStockCount / totalMedicines) * 100) + '%' : '0%'}"
+              ></div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="d-flex justify-content-between mb-1">
+              <span>Out of Stock</span>
+              <span>{{ outOfStockCount }}</span>
+            </div>
+            <div class="progress" style="height: 10px">
+              <div
+                class="progress-bar bg-danger"
+                role="progressbar"
+                ng-style="{'width': totalMedicines ? ((outOfStockCount / totalMedicines) * 100) + '%' : '0%'}"
+              ></div>
+            </div>
+          </div>
+
+          <div class="row text-center g-3">
+            <div class="col-6 col-md-4">
+              <div class="mini-stat">
+                <p class="text-muted mb-1">Total Stock Units</p>
+                <h5 class="mb-0 fw-bold">{{ totalStockUnits }}</h5>
+              </div>
+            </div>
+            <div class="col-6 col-md-4">
+              <div class="mini-stat">
+                <p class="text-muted mb-1">Inventory Value</p>
+                <h5 class="mb-0 fw-bold">
+                  {{ totalInventoryValue | number:2 }}
+                </h5>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="mini-stat">
+                <p class="text-muted mb-1">Average Price</p>
+                <h5 class="mb-0 fw-bold">{{ averagePrice | number:2 }}</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alerts -->
+  <div class="row g-4">
+    <div class="col-12 col-lg-6">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <h4 class="mb-3">Stock Alerts</h4>
+
+          <div
+            class="alert-item d-flex justify-content-between align-items-center"
+            ng-repeat="med in lowStockMedicines track by med.id"
+          >
+            <div>
+              <h6 class="mb-1">{{ med.name }}</h6>
+              <small class="text-muted">
+                {{ med.stock == 0 ? 'Out of Stock' : 'Low Stock' }}
+              </small>
+            </div>
+            <span
+              class="badge"
+              ng-class="{
+                'text-bg-danger': med.stock == 0,
+                'text-bg-warning': med.stock > 0
+              }"
+            >
+              {{ med.stock }} left
+            </span>
+          </div>
+
+          <div
+            class="text-center text-muted py-4"
+            ng-if="lowStockMedicines.length === 0"
+          >
+            No stock alerts right now.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <h4 class="mb-3">Expiry Alerts</h4>
+
+          <div
+            class="alert-item d-flex justify-content-between align-items-center"
+            ng-repeat="med in expiringSoonMedicines track by med.id"
+          >
+            <div>
+              <h6 class="mb-1">{{ med.name }}</h6>
+              <small class="text-muted">
+                Expires on {{ med.expiry_date | date:'yyyy-MM-dd' }}
+              </small>
+            </div>
+            <span class="badge text-bg-success">Soon</span>
+          </div>
+
+          <div
+            class="text-center text-muted py-4"
+            ng-if="expiringSoonMedicines.length === 0"
+          >
+            No expiry alerts right now.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

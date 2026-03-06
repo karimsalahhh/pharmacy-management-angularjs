@@ -2,21 +2,24 @@ angular.module("pharmacyApp").config([
   "$routeProvider",
   function ($routeProvider) {
     $routeProvider
-      .when("/", {
+      .when("/dashboard", {
         templateUrl: "app/views/dashboard.html",
+        controller: "dashCTRL",
+      })
+      .when("/statistics", {
+        templateUrl: "app/views/statistics.html",
+        controller: "statsCTRL",
       })
       .when("/medicines", {
         templateUrl: "app/views/medicines.html",
-        controller: "MedicineController",
+        controller: "medsCTRL",
       })
-      .when("/customers", {
-        template: "<h2>Customers</h2><p>Coming soon...</p>",
-      })
-      .when("/invoices", {
-        template: "<h2>Invoices</h2><p>Coming soon...</p>",
+      .when("/productSearch", {
+        templateUrl: "app/views/productSearch.html",
+        controller: "prodsCTRL",
       })
       .otherwise({
-        redirectTo: "/",
+        redirectTo: "/dashboard",
       });
   },
 ]);

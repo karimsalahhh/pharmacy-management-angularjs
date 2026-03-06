@@ -1,0 +1,146 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f5f7fb;
+}
+
+.admin-layout {
+  min-height: 100vh;
+}
+
+.admin-sidebar {
+  width: 260px;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #1e293b, #0f172a);
+  color: #fff;
+}
+
+.sidebar-brand h4 {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.admin-sidebar .nav-link {
+  color: #dbeafe;
+  border-radius: 10px;
+  padding: 12px 14px;
+  transition: 0.3s;
+}
+
+.admin-sidebar .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.admin-sidebar .nav-link.active {
+  background-color: #2563eb;
+  color: #fff;
+}
+
+.admin-main {
+  background-color: #f8fafc;
+}
+
+.admin-topbar {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.admin-view {
+  min-height: calc(100vh - 73px);
+}
+
+.view-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+}
+
+.dashboard-card {
+  border-radius: 16px;
+}
+
+.dashboard-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+.dashboard-card {
+  border-radius: 16px;
+}
+
+.dashboard-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+.table td,
+.table th {
+  vertical-align: middle;
+}
+
+.is-invalid {
+  border-color: #dc3545;
+}
+
+/* navbar enhancements */
+.navbar-gradient {
+  background: linear-gradient(90deg, #0d6efd, #6610f2);
+}
+
+.navbar .nav-link {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+  color: #fff;
+}
+
+.navbar .navbar-brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.navbar .dropdown-menu {
+  min-width: 8rem;
+}
+.dashboard-card {
+  border-radius: 16px;
+}
+
+.dashboard-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.mini-stat {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 16px;
+  height: 100%;
+}
+
+.alert-item {
+  padding: 14px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.alert-item:last-child {
+  border-bottom: 0;
+}
