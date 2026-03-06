@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en" ng-app="pharmacyApp">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pharmacy Shop</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/styles_user.css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+
+    <script src="app/app.module.js"></script>
+    <script src="app/app.routes.js"></script>
+
+    <script src="app/config/supabase.config.js"></script>
+
+    <script src="app/services/authService.js"></script>
+    <script src="app/services/medsService.js"></script>
+    <script src="app/services/cartService.js"></script>
+    <script src="app/services/wishlistService.js"></script>
+
+    <script src="app/controllers/user/homeCTRL.js"></script>
+    <script src="app/controllers/user/productsCTRL.js"></script>
+    <script src="app/controllers/user/cartCTRL.js"></script>
+    <script src="app/controllers/user/wishlistCTRL.js"></script>
+
+    <script src="app/controllers/auth/loginCTRL.js"></script>
+    <script src="app/controllers/auth/registerCTRL.js"></script>
+  </head>
+
+  <body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+      <div class="container">
+        <a class="navbar-brand" href="#!/user/home">Pharmacy</a>
+
+        <div class="navbar-nav">
+          <a class="nav-link" href="#!/user/home">Home</a>
+          <a class="nav-link" href="#!/user/products">Products</a>
+          <a class="nav-link" href="#!/user/cart">Cart</a>
+          <a class="nav-link" href="#!/user/wishlist">Wishlist</a>
+          <a class="nav-link" href="#!/login">Login</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container py-4">
+      <div ng-view></div>
+    </main>
+  </body>
+</html>
