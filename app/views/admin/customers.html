@@ -1,0 +1,101 @@
+<div>
+  <h2>Customers</h2>
+
+  <form name="customerForm" novalidate class="card mb-3">
+    <div class="card-body">
+      <h5 class="mb-3">Add Customer</h5>
+
+      <div class="row g-2">
+        <div class="col-md-4">
+          <input
+            class="form-control"
+            placeholder="Name"
+            name="name"
+            ng-model="newCustomer.name"
+            required
+            ng-minlength="2"
+            ng-class="{'is-invalid': customerForm.name.$touched && customerForm.name.$invalid}"
+          />
+          <small
+            class="text-danger"
+            ng-show="customerForm.name.$touched && customerForm.name.$invalid"
+          >
+            Name is required
+          </small>
+        </div>
+
+        <div class="col-md-3">
+          <input
+            class="form-control"
+            placeholder="Phone"
+            name="phone"
+            ng-model="newCustomer.phone"
+            required
+            ng-class="{'is-invalid': customerForm.phone.$touched && customerForm.phone.$invalid}"
+          />
+          <small
+            class="text-danger"
+            ng-show="customerForm.phone.$touched && customerForm.phone.$invalid"
+          >
+            Phone is required
+          </small>
+        </div>
+
+        <div class="col-md-4">
+          <input
+            class="form-control"
+            type="email"
+            placeholder="Email"
+            name="email"
+            ng-model="newCustomer.email"
+            required
+            ng-class="{'is-invalid': customerForm.email.$touched && customerForm.email.$invalid}"
+          />
+          <small
+            class="text-danger"
+            ng-show="customerForm.email.$touched && customerForm.email.$invalid"
+          >
+            Enter a valid email
+          </small>
+        </div>
+
+        <div class="col-md-1 d-grid">
+          <button
+            type="button"
+            class="btn btn-primary"
+            ng-click="addCustomer(customerForm)"
+          >
+            Add
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Email</th>
+        <th style="width: 120px">Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr ng-repeat="c in customers">
+        <td>{{ c.name }}</td>
+        <td>{{ c.phone }}</td>
+        <td>{{ c.email }}</td>
+        <td>
+          <button
+            class="btn btn-sm btn-outline-danger"
+            ng-click="deleteCustomer(c.id)"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
