@@ -32,11 +32,15 @@ angular.module("pharmacyApp").config([
       })
       .when("/admin/orders", {
         templateUrl: "app/views/admin/orders.html",
-        controller: "InvoicesController",
+        controller: "OrdersController",
       })
       .when("/admin/productSearch", {
         templateUrl: "app/views/admin/productSearch.html",
         controller: "prodsCTRL",
+      })
+      .when("/admin/invoicesDetails", {
+        templateUrl: "app/views/admin/invoicesDetails.html",
+        controller: "InvoicesDetailsController",
       })
 
       // USER (basic stubs)

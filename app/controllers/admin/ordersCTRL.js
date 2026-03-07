@@ -1,10 +1,10 @@
-angular.module("pharmacyApp").controller("InvoicesController", [
+angular.module("pharmacyApp").controller("OrdersController", [
   "$scope",
   "$q",
   "CustomersService",
   "MedsService",
-  "InvoicesService",
-  function ($scope, $q, CustomersService, MedsService, InvoicesService) {
+  "OrdersService",
+  function ($scope, $q, CustomersService, MedsService, OrdersService) {
     // CUSTOMER SEARCH
     $scope.phone = "";
     $scope.customer = null; // found or created customer row
@@ -15,7 +15,7 @@ angular.module("pharmacyApp").controller("InvoicesController", [
     $scope.medQuery = "";
     $scope.medResults = [];
 
-    // CURRENT INVOICE ITEMS (cart)
+    // CURRENT ORDER ITEMS (cart)
     $scope.cart = []; // { medicine_id, name, unit_price, quantity }
 
     $scope.notes = "";
@@ -177,7 +177,7 @@ angular.module("pharmacyApp").controller("InvoicesController", [
       $scope.cart.splice(index, 1);
       refreshTotal();
     };
-    $scope.saveInvoice = function () {
+    $scope.saveOrder = function () {
       if (!$scope.customer) {
         alert("Choose or create a customer first.");
         return;
@@ -188,36 +188,36 @@ angular.module("pharmacyApp").controller("InvoicesController", [
         return;
       }
 
-      var invoiceTotal = calcTotal();
+      var orderTotal = calcTotal();
 
-      // 1) Create invoice
-      InvoicesService.createInvoice({
+      // 1) Create order
+      OrdersService.createOrder({
         customer_id: $scope.customer.id,
-        total: invoiceTotal,
+        total: orderTotal,
         notes: ($scope.notes || "").trim() || null,
       })
         .then(function (res) {
-          // 2) Get invoice ID from response
-          var invoiceRow = res.data && res.data[0];
-          var invoiceId = invoiceRow ? invoiceRow.id : null;
+          // 2) Get order ID from response
+          var orderRow = res.data && res.data[0];
+          var orderId = orderRow ? orderRow.id : null;
 
-          if (!invoiceId) {
-            throw new Error("Invoice ID not returned from server");
+          if (!orderId) {
+            throw new Error("Order ID not returned from server");
           }
 
-          // 3) Prepare items for this invoice
+          // 3) Prepare items for this order
           var items = [];
           for (var i = 0; i < $scope.cart.length; i++) {
             items.push({
-              invoice_id: invoiceId,
+              invoice_id: orderId,
               medicine_id: $scope.cart[i].medicine_id,
               qty: $scope.cart[i].quantity,
               unit_price: $scope.cart[i].unit_price,
             });
           }
 
-          // 4) Add items to invoice
-          return InvoicesService.addItems(items);
+          // 4) Add items to order
+          return OrdersService.addItems(items);
         })
         .then(function () {
           // 5) Reduce stock for all medicines sold
@@ -225,7 +225,7 @@ angular.module("pharmacyApp").controller("InvoicesController", [
         })
         .then(function () {
           // 6) Success! Show alert and clear form
-          alert("Invoice saved successfully!");
+          alert("Order saved successfully!");
 
           $scope.cart = [];
           $scope.medResults = [];
@@ -238,8 +238,8 @@ angular.module("pharmacyApp").controller("InvoicesController", [
           refreshTotal();
         })
         .catch(function (err) {
-          console.error("Save invoice failed:", err);
-          var errorMsg = "Failed to save invoice.";
+          console.error("Save order failed:", err);
+          var errorMsg = "Failed to save order.";
           if (err.data && err.data.message) {
             errorMsg = err.data.message;
           } else if (err.message) {

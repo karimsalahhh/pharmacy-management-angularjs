@@ -1,4 +1,4 @@
-angular.module("pharmacyApp").service("InvoicesService", [
+angular.module("pharmacyApp").service("OrdersService", [
   "$http",
   "SUPABASE_CONFIG",
   function ($http, SUPABASE_CONFIG) {
@@ -9,19 +9,19 @@ angular.module("pharmacyApp").service("InvoicesService", [
       Prefer: "return=representation",
     };
 
-    var invoicesUrl = SUPABASE_CONFIG.API_URL + "/invoices";
+    var ordersUrl = SUPABASE_CONFIG.API_URL + "/invoices";
     var itemsUrl = SUPABASE_CONFIG.API_URL + "/invoice_items";
 
-    this.createInvoice = function (invoice) {
-      return $http.post(invoicesUrl, invoice, { headers: headers });
+    this.createOrder = function (order) {
+      return $http.post(ordersUrl, order, { headers: headers });
     };
 
     this.addItems = function (items) {
       return $http.post(itemsUrl, items, { headers: headers });
     };
 
-    this.getAllInvoices = function () {
-      return $http.get(invoicesUrl + "?select=*&order=id.asc", {
+    this.getAllOrders = function () {
+      return $http.get(ordersUrl + "?select=*&order=id.asc", {
         headers: headers,
       });
     };

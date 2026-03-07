@@ -4,6 +4,9 @@ angular.module("pharmacyApp").controller("MedicineController", [
   "MedsService",
   function ($scope, MedsService) {
     $scope.medicines = [];
+    $scope.filteredMedicines = [];
+    $scope.searchText = "";
+    $scope.stockFilter = "all";
     $scope.isEditMode = false;
     $scope.selectedMedicine = {};
     $scope.errorMessage = "";
@@ -17,6 +20,7 @@ angular.module("pharmacyApp").controller("MedicineController", [
       MedsService.getAll()
         .then(function (response) {
           $scope.medicines = response.data;
+          $scope.filterMedicines();
           $scope.loading = false;
         })
         .catch(function (error) {
@@ -25,6 +29,36 @@ angular.module("pharmacyApp").controller("MedicineController", [
           $scope.loading = false;
         });
     }
+
+    // Filter medicines based on search and stock filter
+    $scope.filterMedicines = function () {
+      var filtered = $scope.medicines;
+
+      // Filter by search text
+      if ($scope.searchText && $scope.searchText.trim()) {
+        var searchLower = $scope.searchText.toLowerCase().trim();
+        filtered = filtered.filter(function (med) {
+          return med.name.toLowerCase().indexOf(searchLower) !== -1;
+        });
+      }
+
+      // Filter by stock status
+      if ($scope.stockFilter !== "all") {
+        filtered = filtered.filter(function (med) {
+          var status = $scope.getStockStatus(med.stock);
+          if ($scope.stockFilter === "available") {
+            return status === "Available";
+          } else if ($scope.stockFilter === "low") {
+            return status === "Low Stock";
+          } else if ($scope.stockFilter === "out") {
+            return status === "Out of Stock";
+          }
+          return true;
+        });
+      }
+
+      $scope.filteredMedicines = filtered;
+    };
 
     loadMedicines();
 

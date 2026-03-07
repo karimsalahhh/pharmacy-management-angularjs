@@ -3,8 +3,8 @@ angular.module("pharmacyApp").controller("StatisticsController", [
   "$q",
   "MedsService",
   "CustomersService",
-  "InvoicesService",
-  function ($scope, $q, MedsService, CustomersService, InvoicesService) {
+  "OrdersService",
+  function ($scope, $q, MedsService, CustomersService, OrdersService) {
     $scope.stats = {};
     $scope.loading = true;
     $scope.topMedicines = [];
@@ -16,13 +16,13 @@ angular.module("pharmacyApp").controller("StatisticsController", [
       $q.all({
         medicines: MedsService.getAll(),
         customers: CustomersService.getAll(),
-        invoices: InvoicesService.getAllInvoices(),
-        items: InvoicesService.getAllItems(),
+        orders: OrdersService.getAllOrders(),
+        items: OrdersService.getAllItems(),
       })
         .then(function (results) {
           var meds = results.medicines.data || [];
           var customers = results.customers.data || [];
-          var invoices = results.invoices.data || [];
+          var orders = results.orders.data || [];
           var items = results.items.data || [];
 
           // Calculate medicine stats
@@ -90,11 +90,11 @@ angular.module("pharmacyApp").controller("StatisticsController", [
 
           // Calculate top customers
           var customerPurchases = {};
-          invoices.forEach(function (inv) {
-            if (!customerPurchases[inv.customer_id]) {
-              customerPurchases[inv.customer_id] = 0;
+          orders.forEach(function (order) {
+            if (!customerPurchases[order.customer_id]) {
+              customerPurchases[order.customer_id] = 0;
             }
-            customerPurchases[inv.customer_id] += Number(inv.total) || 0;
+            customerPurchases[order.customer_id] += Number(order.total) || 0;
           });
 
           var topCusts = Object.keys(customerPurchases)

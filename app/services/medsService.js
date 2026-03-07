@@ -12,7 +12,7 @@ angular.module("pharmacyApp").service("MedsService", [
     var baseUrl = SUPABASE_CONFIG.API_URL + "/medicines";
 
     this.getAll = function () {
-      return $http.get(baseUrl + "?select=*&order=id.asc", {
+      return $http.get(baseUrl + "?select=*&order=id.desc", {
         headers: headers,
       });
     };
