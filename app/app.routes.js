@@ -8,11 +8,6 @@ angular.module("pharmacyApp").config([
         templateUrl: "app/views/auth/login.html",
         controller: "LoginController",
       })
-      .when("/register", {
-        templateUrl: "app/views/auth/register.html",
-        controller: "RegisterController",
-      })
-
       // ADMIN
       .when("/admin/dashboard", {
         templateUrl: "app/views/admin/dashboard.html",
