@@ -1,15 +1,19 @@
-<div>
-  <h2>Customers</h2>
+<div class="container-fluid">
+  <div class="mb-4">
+    <h2 class="fw-bold mb-1">Customers</h2>
+    <p class="text-muted mb-0">Manage customer profiles and contact details</p>
+  </div>
 
-  <form name="customerForm" novalidate class="card mb-3">
+  <form name="customerForm" novalidate class="card mb-4">
     <div class="card-body">
-      <h5 class="mb-3">Add Customer</h5>
+      <h5 class="mb-3">Add New Customer</h5>
 
-      <div class="row g-2">
+      <div class="row g-3">
         <div class="col-md-4">
+          <label class="form-label">Name</label>
           <input
             class="form-control"
-            placeholder="Name"
+            placeholder="Customer name"
             name="name"
             ng-model="newCustomer.name"
             required
@@ -20,14 +24,15 @@
             class="text-danger"
             ng-show="customerForm.name.$touched && customerForm.name.$invalid"
           >
-            Name is required
+            Name is required.
           </small>
         </div>
 
         <div class="col-md-3">
+          <label class="form-label">Phone</label>
           <input
             class="form-control"
-            placeholder="Phone"
+            placeholder="Phone number"
             name="phone"
             ng-model="newCustomer.phone"
             required
@@ -37,15 +42,16 @@
             class="text-danger"
             ng-show="customerForm.phone.$touched && customerForm.phone.$invalid"
           >
-            Phone is required
+            Phone is required.
           </small>
         </div>
 
         <div class="col-md-4">
+          <label class="form-label">Email</label>
           <input
             class="form-control"
             type="email"
-            placeholder="Email"
+            placeholder="Email address"
             name="email"
             ng-model="newCustomer.email"
             required
@@ -55,11 +61,12 @@
             class="text-danger"
             ng-show="customerForm.email.$touched && customerForm.email.$invalid"
           >
-            Enter a valid email
+            Enter a valid email.
           </small>
         </div>
 
         <div class="col-md-1 d-grid">
+          <label class="form-label d-none d-md-block">&nbsp;</label>
           <button
             type="button"
             class="btn btn-primary"
@@ -72,30 +79,40 @@
     </div>
   </form>
 
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Phone</th>
-        <th>Email</th>
-        <th style="width: 120px">Actions</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr ng-repeat="c in customers">
-        <td>{{ c.name }}</td>
-        <td>{{ c.phone }}</td>
-        <td>{{ c.email }}</td>
-        <td>
-          <button
-            class="btn btn-sm btn-outline-danger"
-            ng-click="deleteCustomer(c.id)"
-          >
-            Delete
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="card">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-striped mb-0">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th style="width: 140px">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="c in customers">
+              <td>{{ c.name }}</td>
+              <td>{{ c.phone }}</td>
+              <td>{{ c.email }}</td>
+              <td>
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  ng-click="deleteCustomer(c.id)"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+            <tr ng-if="customers.length === 0">
+              <td colspan="4" class="text-center text-muted py-4">
+                No customers available.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>

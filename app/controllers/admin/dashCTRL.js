@@ -1,86 +1,59 @@
-console.log("DashboardController file loaded");
-
-// !This file controls the dashboard view and its calling of the data from medsService.js
 angular.module("pharmacyApp").controller("DashboardController", [
   "$scope",
-  "MedsService",
-  function ($scope, MedsService) {
-    $scope.medicines = [];
-    $scope.totalMedicines = 0;
-    $scope.lowStockCount = 0;
-    $scope.outOfStockCount = 0;
-    $scope.averagePrice = 0;
-    $scope.expiringSoonCount = 0;
+  "AdminInsightsService",
+  function ($scope, AdminInsightsService) {
+    $scope.loading = true;
+    $scope.error = null;
 
-    // New dashboard values
-    $scope.availableCount = 0;
-    $scope.totalStockUnits = 0;
-    $scope.totalInventoryValue = 0;
+    $scope.kpis = {
+      totalInvoices: 0,
+      todayRevenue: 0,
+      unfulfilledCount: 0,
+      lowStockCount: 0,
+    };
+
+    $scope.inventory = {
+      totalMedicines: 0,
+      availableCount: 0,
+      lowStockCount: 0,
+      outOfStockCount: 0,
+      expiringSoonCount: 0,
+      totalStockUnits: 0,
+      totalInventoryValue: 0,
+      averagePrice: 0,
+    };
+
+    $scope.unfulfilledInvoices = [];
     $scope.lowStockMedicines = [];
     $scope.expiringSoonMedicines = [];
 
-    MedsService.getAll()
-      .then(function (response) {
-        $scope.medicines = response.data || [];
-        $scope.totalMedicines = $scope.medicines.length;
+    $scope.loadDashboard = function (forceRefresh) {
+      $scope.loading = true;
+      $scope.error = null;
 
-        var lowStock = 0;
-        var outOfStock = 0;
-        var totalPrice = 0;
-        var expiringSoon = 0;
+      AdminInsightsService.getInsights({ forceRefresh: !!forceRefresh })
+        .then(function (insights) {
+          $scope.inventory = insights.inventory;
+          $scope.kpis.totalInvoices = insights.sales.totalInvoices;
+          $scope.kpis.todayRevenue = insights.sales.todayRevenue;
+          $scope.kpis.unfulfilledCount = insights.sales.unfulfilledCount;
+          $scope.kpis.lowStockCount =
+            insights.inventory.lowStockCount + insights.inventory.outOfStockCount;
 
-        var available = 0;
-        var totalStock = 0;
-        var totalValue = 0;
-
-        var today = new Date();
-        var next30Days = new Date();
-        next30Days.setDate(today.getDate() + 30);
-
-        $scope.lowStockMedicines = [];
-        $scope.expiringSoonMedicines = [];
-
-        angular.forEach($scope.medicines, function (med) {
-          var stock = Number(med.stock) || 0;
-          var price = Number(med.price) || 0;
-          var expiryDate = med.expiry_date ? new Date(med.expiry_date) : null;
-
-          totalPrice += price;
-          totalStock += stock;
-          totalValue += stock * price;
-
-          if (stock === 0) {
-            outOfStock++;
-            $scope.lowStockMedicines.push(med);
-          } else if (stock <= 10) {
-            lowStock++;
-            $scope.lowStockMedicines.push(med);
-          } else {
-            available++;
-          }
-
-          if (expiryDate && expiryDate >= today && expiryDate <= next30Days) {
-            expiringSoon++;
-            $scope.expiringSoonMedicines.push(med);
-          }
+          $scope.unfulfilledInvoices = insights.unfulfilledInvoices.slice(0, 8);
+          $scope.lowStockMedicines = insights.inventory.lowStockMedicines.slice(0, 6);
+          $scope.expiringSoonMedicines =
+            insights.inventory.expiringSoonMedicines.slice(0, 6);
+        })
+        .catch(function (err) {
+          console.error("Failed to load dashboard insights:", err);
+          $scope.error = "Could not load dashboard data.";
+        })
+        .finally(function () {
+          $scope.loading = false;
         });
+    };
 
-        $scope.lowStockCount = lowStock;
-        $scope.outOfStockCount = outOfStock;
-        $scope.averagePrice =
-          $scope.totalMedicines > 0 ? totalPrice / $scope.totalMedicines : 0;
-        $scope.expiringSoonCount = expiringSoon;
-
-        $scope.availableCount = available;
-        $scope.totalStockUnits = totalStock;
-        $scope.totalInventoryValue = totalValue;
-
-        // limit alert lists on dashboard
-        $scope.lowStockMedicines = $scope.lowStockMedicines.slice(0, 5);
-        $scope.expiringSoonMedicines = $scope.expiringSoonMedicines.slice(0, 5);
-      })
-      .catch(function (error) {
-        console.error("Error fetching dashboard data:", error);
-      });
+    $scope.loadDashboard();
   },
 ]);

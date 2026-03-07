@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pharmacy Admin</title>
+    <title>Pharmacy Admin Suite</title>
 
     <!-- !Bootstrap -->
     <link
@@ -34,11 +34,13 @@
     <script src="app/controllers/admin/prodsCTRL.js"></script>
     <script src="app/controllers/admin/customersCTRL.js"></script>
     <script src="app/controllers/admin/ordersCTRL.js"></script>
+    <script src="app/controllers/admin/invoicesDetailsCTRL.js"></script>
 
     <!-- !Services -->
     <script src="app/services/medsService.js"></script>
     <script src="app/services/customersService.js"></script>
     <script src="app/services/ordersService.js"></script>
+    <script src="app/services/insightsService.js"></script>
     <script src="app/config/supabase.config.js"></script>
   </head>
 
@@ -51,7 +53,7 @@
           href="#!/admin/dashboard"
         >
           <i class="bi bi-prescription2 me-2"></i>
-          <span>Pharmacy Admin</span>
+          <span>Pharmacy Admin Suite</span>
         </a>
         <button
           class="navbar-toggler"
@@ -90,6 +92,11 @@
             <li class="nav-item">
               <a class="nav-link" href="#!/admin/orders">
                 <i class="bi bi-receipt me-1"></i>Create Order
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#!/admin/invoicesDetails">
+                <i class="bi bi-receipt me-1"></i>Manage Invoices
               </a>
             </li>
           </ul>

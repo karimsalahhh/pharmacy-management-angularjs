@@ -31,5 +31,11 @@ angular.module("pharmacyApp").service("OrdersService", [
         headers: headers,
       });
     };
+
+    this.updateOrder = function (id, payload) {
+      return $http.patch(ordersUrl + "?id=eq." + id, payload, {
+        headers: headers,
+      });
+    };
   },
 ]);

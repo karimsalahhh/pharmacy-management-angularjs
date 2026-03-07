@@ -1,191 +1,182 @@
 <div class="container-fluid">
-  <div class="mb-4">
-    <h2 class="fw-bold mb-1">Statistics</h2>
-    <p class="text-muted mb-0">Overview of pharmacy data and insights</p>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1">Business Analytics</h2>
+      <p class="text-muted mb-0">
+        Revenue, fulfillment, and customer performance metrics
+      </p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <select class="form-select" style="width: 180px" ng-model="periodDays" ng-change="changePeriod()">
+        <option value="7">Last 7 Days</option>
+        <option value="30">Last 30 Days</option>
+        <option value="90">Last 90 Days</option>
+        <option value="365">Last 365 Days</option>
+      </select>
+      <button class="btn btn-outline-primary" ng-click="loadStats(true)" ng-disabled="loading">
+        <i class="bi bi-arrow-repeat me-1"></i> Refresh
+      </button>
+    </div>
   </div>
 
   <div ng-if="loading" class="text-center py-5">
     <div class="spinner-border text-primary mb-3"></div>
-    <p class="mb-0">Loading statistics...</p>
+    <p class="mb-0">Loading analytics...</p>
   </div>
 
-  <div ng-if="!loading">
-    <!-- Top Stats Cards -->
+  <div ng-if="error" class="alert alert-danger">{{ error }}</div>
+
+  <div ng-if="!loading && !error">
     <div class="row g-4 mb-4">
-      <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card stats-card shadow-sm border-0 h-100">
+      <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card shadow-sm border-0 h-100">
           <div class="card-body">
-            <div class="d-flex justify-content-between align-items-start">
-              <div>
-                <p class="text-muted mb-2">Total Medicines</p>
-                <h3 class="fw-bold mb-0">{{ stats.totalMedicines }}</h3>
+            <p class="text-muted mb-2">Invoices</p>
+            <h4 class="fw-bold mb-0">{{ summary.invoices }}</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <p class="text-muted mb-2">Revenue</p>
+            <h4 class="fw-bold mb-0">{{ summary.revenue | currency }}</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <p class="text-muted mb-2">Avg Invoice</p>
+            <h4 class="fw-bold mb-0">{{ summary.avgInvoice | number:2 }}</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <p class="text-muted mb-2">Paid Rate</p>
+            <h4 class="fw-bold mb-0">{{ summary.paidRate | number:1 }}%</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <p class="text-muted mb-2">Fulfillment Rate</p>
+            <h4 class="fw-bold mb-0">{{ summary.fulfillmentRate | number:1 }}%</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <p class="text-muted mb-2">Unfulfilled</p>
+            <h4 class="fw-bold mb-0 text-danger">{{ summary.unfulfilledCount }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <div class="col-12 col-lg-7">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <h5 class="mb-3">Revenue Trend</h5>
+            <div ng-if="revenueTrend.length === 0" class="text-muted text-center py-4">
+              No revenue data in selected period.
+            </div>
+            <div ng-if="revenueTrend.length > 0">
+              <div class="mb-2" ng-repeat="point in revenueTrend track by point.day">
+                <div class="d-flex justify-content-between">
+                  <small>{{ point.day }}</small>
+                  <small>{{ point.value | currency }}</small>
+                </div>
+                <div class="progress" style="height: 10px">
+                  <div class="progress-bar bg-primary" ng-style="{'width': point.width + '%'}"></div>
+                </div>
               </div>
-              <span class="stats-icon bg-primary-subtle text-primary">
-                <i class="bi bi-capsule-pill"></i>
-              </span>
             </div>
           </div>
         </div>
       </div>
-
-      <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card stats-card shadow-sm border-0 h-100">
+      <div class="col-12 col-lg-5">
+        <div class="card shadow-sm border-0 h-100">
           <div class="card-body">
-            <div class="d-flex justify-content-between align-items-start">
-              <div>
-                <p class="text-muted mb-2">Total Stock Units</p>
-                <h3 class="fw-bold mb-0">{{ stats.totalStock }}</h3>
-              </div>
-              <span class="stats-icon bg-success-subtle text-success">
-                <i class="bi bi-box-seam"></i>
-              </span>
+            <h5 class="mb-3">Inventory Snapshot</h5>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Total Medicines</span>
+              <strong>{{ inventorySnapshot.totalMedicines }}</strong>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card stats-card shadow-sm border-0 h-100">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-start">
-              <div>
-                <p class="text-muted mb-2">Inventory Value</p>
-                <h3 class="fw-bold mb-0">{{ stats.totalValue | currency }}</h3>
-              </div>
-              <span class="stats-icon bg-info-subtle text-info">
-                <i class="bi bi-cash"></i>
-              </span>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Stock Units</span>
+              <strong>{{ inventorySnapshot.totalStockUnits }}</strong>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card stats-card shadow-sm border-0 h-100">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-start">
-              <div>
-                <p class="text-muted mb-2">Total Customers</p>
-                <h3 class="fw-bold mb-0">{{ stats.totalCustomers }}</h3>
-              </div>
-              <span class="stats-icon bg-warning-subtle text-warning">
-                <i class="bi bi-people"></i>
-              </span>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Inventory Value</span>
+              <strong>{{ inventorySnapshot.totalInventoryValue | currency }}</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Low Stock</span>
+              <strong class="text-warning">{{ inventorySnapshot.lowStockCount }}</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Out of Stock</span>
+              <strong class="text-danger">{{ inventorySnapshot.outOfStockCount }}</strong>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span>Expiring in 30 days</span>
+              <strong class="text-info">{{ inventorySnapshot.expiringSoonCount }}</strong>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Alerts Section -->
-    <div class="row g-4 mb-4">
-      <div class="col-12 col-md-4">
-        <div class="card shadow-sm border-0 h-100">
-          <div class="card-body">
-            <h5 class="mb-3">
-              <i class="bi bi-exclamation-triangle text-warning me-2"></i>
-              Low Stock Alert
-            </h5>
-            <div class="alert alert-warning">
-              <strong>{{ stats.lowStockCount }}</strong> medicines have low
-              stock (≤10 units)
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-12 col-md-4">
-        <div class="card shadow-sm border-0 h-100">
-          <div class="card-body">
-            <h5 class="mb-3">
-              <i class="bi bi-x-circle text-danger me-2"></i>
-              Out of Stock
-            </h5>
-            <div class="alert alert-danger">
-              <strong>{{ stats.outOfStockCount }}</strong> medicines are
-              completely out of stock
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-12 col-md-4">
-        <div class="card shadow-sm border-0 h-100">
-          <div class="card-body">
-            <h5 class="mb-3">
-              <i class="bi bi-clock-history text-info me-2"></i>
-              Expiring Soon
-            </h5>
-            <div class="alert alert-info">
-              <strong>{{ stats.expiringSoonCount }}</strong> medicines expire
-              within 30 days
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Top Rankings -->
     <div class="row g-4">
       <div class="col-12 col-lg-6">
-        <div class="card shadow-sm border-0">
+        <div class="card shadow-sm border-0 h-100">
           <div class="card-body">
-            <h5 class="mb-3">
-              <i class="bi bi-trophy text-warning me-2"></i>
-              Top Selling Medicines
-            </h5>
-            <div ng-if="topMedicines.length === 0" class="text-center py-4">
-              <i class="bi bi-capsule text-muted" style="font-size: 3rem"></i>
-              <p class="text-muted mt-2">No sales data available</p>
+            <h5 class="mb-3">Top Selling Medicines</h5>
+            <div ng-if="topMedicines.length === 0" class="text-muted text-center py-4">
+              No sales data available.
             </div>
-            <div ng-if="topMedicines.length > 0">
-              <ol class="list-group list-group-numbered">
-                <li
-                  class="list-group-item d-flex justify-content-between align-items-start"
-                  ng-repeat="med in topMedicines"
-                >
-                  <div class="ms-2 me-auto">
-                    <div class="fw-bold">{{ med.name }}</div>
-                  </div>
-                  <span class="badge bg-primary rounded-pill"
-                    >{{ med.sold }} sold</span
-                  >
-                </li>
-              </ol>
-            </div>
+            <ol ng-if="topMedicines.length > 0" class="list-group list-group-numbered">
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+                ng-repeat="med in topMedicines track by med.id"
+              >
+                <span>{{ med.name }}</span>
+                <span class="badge bg-primary rounded-pill">{{ med.soldQty }} sold</span>
+              </li>
+            </ol>
           </div>
         </div>
       </div>
 
       <div class="col-12 col-lg-6">
-        <div class="card shadow-sm border-0">
+        <div class="card shadow-sm border-0 h-100">
           <div class="card-body">
-            <h5 class="mb-3">
-              <i class="bi bi-star text-success me-2"></i>
-              Top Buying Customers
-            </h5>
-            <div ng-if="topCustomers.length === 0" class="text-center py-4">
-              <i class="bi bi-people text-muted" style="font-size: 3rem"></i>
-              <p class="text-muted mt-2">No purchase data available</p>
+            <h5 class="mb-3">Top Customers by Revenue</h5>
+            <div ng-if="topCustomers.length === 0" class="text-muted text-center py-4">
+              No customer sales data available.
             </div>
-            <div ng-if="topCustomers.length > 0">
-              <ol class="list-group list-group-numbered">
-                <li
-                  class="list-group-item d-flex justify-content-between align-items-start"
-                  ng-repeat="cust in topCustomers"
-                >
-                  <div class="ms-2 me-auto">
-                    <div class="fw-bold">{{ cust.name }}</div>
-                  </div>
-                  <span class="badge bg-success rounded-pill"
-                    >{{ cust.total | currency }}</span
-                  >
-                </li>
-              </ol>
-            </div>
+            <ol ng-if="topCustomers.length > 0" class="list-group list-group-numbered">
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+                ng-repeat="cust in topCustomers track by cust.id"
+              >
+                <span>{{ cust.name }}</span>
+                <span class="badge bg-success rounded-pill">{{ cust.totalSpent | currency }}</span>
+              </li>
+            </ol>
           </div>
         </div>
       </div>
     </div>
+
+    <p class="text-muted mt-3 mb-0" ng-if="lastUpdated">
+      Last updated: {{ lastUpdated | date:'yyyy-MM-dd HH:mm:ss' }}
+    </p>
   </div>
 </div>

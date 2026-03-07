@@ -1,124 +1,115 @@
 angular.module("pharmacyApp").controller("StatisticsController", [
   "$scope",
-  "$q",
-  "MedsService",
-  "CustomersService",
-  "OrdersService",
-  function ($scope, $q, MedsService, CustomersService, OrdersService) {
-    $scope.stats = {};
+  "AdminInsightsService",
+  function ($scope, AdminInsightsService) {
     $scope.loading = true;
+    $scope.error = null;
+    $scope.periodDays = 30;
+    $scope.lastUpdated = null;
+
+    $scope.summary = {
+      invoices: 0,
+      revenue: 0,
+      avgInvoice: 0,
+      paidRate: 0,
+      fulfillmentRate: 0,
+      unfulfilledCount: 0,
+    };
+
     $scope.topMedicines = [];
     $scope.topCustomers = [];
+    $scope.revenueTrend = [];
+    $scope.inventorySnapshot = {};
+    $scope.allOrders = [];
 
-    $scope.loadStats = function () {
+    function toNumber(v) {
+      var n = Number(v);
+      return isNaN(n) ? 0 : n;
+    }
+
+    function periodStartMs(days) {
+      var now = new Date();
+      return new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() - (toNumber(days) - 1),
+      ).getTime();
+    }
+
+    function applyPeriodMetrics() {
+      var start = periodStartMs($scope.periodDays);
+      var inPeriod = $scope.allOrders.filter(function (o) {
+        return o.created_time >= start;
+      });
+
+      var invoices = inPeriod.length;
+      var revenue = 0;
+      var paidCount = 0;
+      var fulfilledCount = 0;
+      var unfulfilledCount = 0;
+
+      for (var i = 0; i < inPeriod.length; i++) {
+        var order = inPeriod[i];
+        revenue += toNumber(order.total);
+        if (order.paid) paidCount++;
+        if (order.fulfilled) fulfilledCount++;
+        else unfulfilledCount++;
+      }
+
+      $scope.summary.invoices = invoices;
+      $scope.summary.revenue = revenue;
+      $scope.summary.avgInvoice = invoices > 0 ? revenue / invoices : 0;
+      $scope.summary.paidRate =
+        invoices > 0 ? (paidCount / invoices) * 100 : 0;
+      $scope.summary.fulfillmentRate =
+        invoices > 0 ? (fulfilledCount / invoices) * 100 : 0;
+      $scope.summary.unfulfilledCount = unfulfilledCount;
+    }
+
+    function buildTrend(series) {
+      var start = periodStartMs($scope.periodDays);
+      var filtered = series.filter(function (p) {
+        return new Date(p.day).getTime() >= start;
+      });
+      var max = 0;
+      for (var i = 0; i < filtered.length; i++) {
+        if (filtered[i].value > max) max = filtered[i].value;
+      }
+      $scope.revenueTrend = filtered.map(function (p) {
+        return {
+          day: p.day,
+          value: p.value,
+          width: max > 0 ? (p.value / max) * 100 : 0,
+        };
+      });
+    }
+
+    $scope.changePeriod = function () {
+      applyPeriodMetrics();
+      if ($scope._cachedSeries) buildTrend($scope._cachedSeries);
+    };
+
+    $scope.loadStats = function (forceRefresh) {
       $scope.loading = true;
+      $scope.error = null;
 
-      $q.all({
-        medicines: MedsService.getAll(),
-        customers: CustomersService.getAll(),
-        orders: OrdersService.getAllOrders(),
-        items: OrdersService.getAllItems(),
-      })
-        .then(function (results) {
-          var meds = results.medicines.data || [];
-          var customers = results.customers.data || [];
-          var orders = results.orders.data || [];
-          var items = results.items.data || [];
+      AdminInsightsService.getInsights({ forceRefresh: !!forceRefresh })
+        .then(function (insights) {
+          $scope.inventorySnapshot = insights.inventory;
+          $scope.topMedicines = insights.topMedicines;
+          $scope.topCustomers = insights.topCustomers;
+          $scope.allOrders = insights.ordersNormalized;
+          $scope._cachedSeries = insights.revenueSeries;
+          $scope.lastUpdated = new Date();
 
-          // Calculate medicine stats
-          var totalMedicines = meds.length;
-          var totalStock = 0;
-          var totalValue = 0;
-          var lowStockCount = 0;
-          var outOfStockCount = 0;
-          var expiringSoonCount = 0;
-          var today = new Date();
-          var next30Days = new Date();
-          next30Days.setDate(today.getDate() + 30);
-
-          meds.forEach(function (med) {
-            var stock = Number(med.stock) || 0;
-            var price = Number(med.price) || 0;
-            var expiry = med.expiry_date ? new Date(med.expiry_date) : null;
-
-            totalStock += stock;
-            totalValue += stock * price;
-
-            if (stock === 0) outOfStockCount++;
-            else if (stock <= 10) lowStockCount++;
-
-            if (expiry && expiry >= today && expiry <= next30Days)
-              expiringSoonCount++;
-          });
-
-          $scope.stats = {
-            totalMedicines: totalMedicines,
-            totalStock: totalStock,
-            totalValue: totalValue,
-            lowStockCount: lowStockCount,
-            outOfStockCount: outOfStockCount,
-            expiringSoonCount: expiringSoonCount,
-            totalCustomers: customers.length,
-          };
-
-          // Calculate top selling medicines
-          var medicineSales = {};
-          items.forEach(function (item) {
-            if (!medicineSales[item.medicine_id]) {
-              medicineSales[item.medicine_id] = 0;
-            }
-            medicineSales[item.medicine_id] += Number(item.qty) || 0;
-          });
-
-          var topMeds = Object.keys(medicineSales)
-            .map(function (id) {
-              var med = meds.find(function (m) {
-                return m.id == id;
-              });
-              return {
-                id: id,
-                name: med ? med.name : "Unknown",
-                sold: medicineSales[id],
-              };
-            })
-            .sort(function (a, b) {
-              return b.sold - a.sold;
-            })
-            .slice(0, 5);
-
-          $scope.topMedicines = topMeds;
-
-          // Calculate top customers
-          var customerPurchases = {};
-          orders.forEach(function (order) {
-            if (!customerPurchases[order.customer_id]) {
-              customerPurchases[order.customer_id] = 0;
-            }
-            customerPurchases[order.customer_id] += Number(order.total) || 0;
-          });
-
-          var topCusts = Object.keys(customerPurchases)
-            .map(function (id) {
-              var cust = customers.find(function (c) {
-                return c.id == id;
-              });
-              return {
-                id: id,
-                name: cust ? cust.name : "Unknown",
-                total: customerPurchases[id],
-              };
-            })
-            .sort(function (a, b) {
-              return b.total - a.total;
-            })
-            .slice(0, 5);
-
-          $scope.topCustomers = topCusts;
-
-          $scope.loading = false;
+          applyPeriodMetrics();
+          buildTrend(insights.revenueSeries);
         })
-        .catch(function (error) {
-          console.error("Error loading statistics:", error);
+        .catch(function (err) {
+          console.error("Failed loading statistics:", err);
+          $scope.error = "Could not load statistics.";
+        })
+        .finally(function () {
           $scope.loading = false;
         });
     };

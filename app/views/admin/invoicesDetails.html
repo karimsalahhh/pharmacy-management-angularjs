@@ -1,0 +1,227 @@
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1">Invoices Details</h2>
+      <p class="text-muted mb-0">All invoices across the whole application</p>
+    </div>
+    <a href="#!/admin/dashboard" class="btn btn-outline-dark">
+      <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+    </a>
+  </div>
+
+  <div class="alert alert-info" ng-if="loading">Loading invoices...</div>
+  <div class="alert alert-danger" ng-if="error">{{ error }}</div>
+
+  <div class="card border-0 shadow-sm mb-3" ng-if="!loading && !error">
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-12 col-lg-4">
+          <label class="form-label mb-1">Search</label>
+          <input
+            type="text"
+            class="form-control"
+            ng-model="filters.query"
+            placeholder="Invoice #, customer, phone, total..."
+          />
+        </div>
+        <div class="col-6 col-lg-2">
+          <label class="form-label mb-1">Paid</label>
+          <select class="form-select" ng-model="filters.paid">
+            <option value="all">All</option>
+            <option value="paid">Paid</option>
+            <option value="unpaid">Unpaid</option>
+          </select>
+        </div>
+        <div class="col-6 col-lg-2">
+          <label class="form-label mb-1">Fulfillment</label>
+          <select class="form-select" ng-model="filters.fulfilled">
+            <option value="all">All</option>
+            <option value="done">Done</option>
+            <option value="pending">Pending</option>
+          </select>
+        </div>
+        <div class="col-6 col-lg-2">
+          <label class="form-label mb-1">From</label>
+          <input type="date" class="form-control" ng-model="filters.dateFrom" />
+        </div>
+        <div class="col-6 col-lg-2">
+          <label class="form-label mb-1">To</label>
+          <input type="date" class="form-control" ng-model="filters.dateTo" />
+        </div>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <small class="text-muted">
+          Showing {{ getFilteredInvoices().length }} of {{ invoices.length }} invoices
+        </small>
+        <button class="btn btn-sm btn-outline-secondary" ng-click="resetFilters()">
+          Reset Filters
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm" ng-if="!loading && !error">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Invoice #</th>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Total</th>
+              <th>Paid Status</th>
+              <th>Fulfillment</th>
+              <th style="min-width: 340px">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="inv in getFilteredInvoices() track by inv.id">
+              <td class="fw-semibold">#{{ inv.id }}</td>
+              <td>{{ (inv.created_at || inv.date || inv.invoice_date) | date:'yyyy-MM-dd HH:mm' }}</td>
+              <td>
+                <div>{{ inv.customer_name }}</div>
+                <small class="text-muted">{{ inv.customer_phone }}</small>
+              </td>
+              <td>{{ inv.total | number:2 }}</td>
+              <td>
+                <span
+                  class="badge"
+                  ng-class="{
+                    'text-bg-success': inv._paidState === true,
+                    'text-bg-secondary': inv._paidState === false
+                  }"
+                >
+                  {{ inv._paidState === true ? 'Paid' : 'Unpaid' }}
+                </span>
+              </td>
+              <td>
+                <span
+                  class="badge"
+                  ng-class="{
+                    'text-bg-success': inv._fulfilledState === true,
+                    'text-bg-warning': inv._fulfilledState === false
+                  }"
+                >
+                  {{ inv._fulfilledState === true ? 'Done' : 'Pending' }}
+                </span>
+              </td>
+              <td>
+                <div class="d-flex flex-wrap gap-2">
+                  <button
+                    class="btn btn-outline-primary btn-sm"
+                    ng-click="togglePaidStatus(inv)"
+                    ng-disabled="invoiceActionLoading[inv.id]"
+                  >
+                    <i class="bi bi-cash-coin me-1"></i>
+                    Toggle Payment
+                  </button>
+                  <button
+                    class="btn btn-success btn-sm"
+                    ng-click="fulfillInvoice(inv)"
+                    ng-disabled="invoiceActionLoading[inv.id]"
+                  >
+                    <i class="bi bi-check2-circle me-1"></i>
+                    {{ inv._fulfilledState ? 'Mark Pending' : 'Mark Done' }}
+                  </button>
+                  <button
+                    class="btn btn-outline-dark btn-sm"
+                    ng-click="openInvoiceDetails(inv)"
+                  >
+                    <i class="bi bi-eye me-1"></i>
+                    View More
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr ng-if="getFilteredInvoices().length === 0">
+              <td colspan="7" class="text-center py-4 text-muted">
+                No invoices found for current filters.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div
+    ng-if="selectedInvoice"
+    class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+    style="z-index: 1080; background: rgba(0, 0, 0, 0.45)"
+  >
+    <div class="card shadow-lg border-0" style="width: min(920px, 95vw); max-height: 90vh; overflow: auto">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Invoice #{{ selectedInvoice.invoice.id }} Details</h5>
+        <button class="btn btn-sm btn-outline-secondary" ng-click="closeInvoiceDetails()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <small class="text-muted d-block">Date</small>
+            <strong>{{ (selectedInvoice.invoice.created_at || selectedInvoice.invoice.date || selectedInvoice.invoice.invoice_date) | date:'yyyy-MM-dd HH:mm' }}</strong>
+          </div>
+          <div class="col-md-4">
+            <small class="text-muted d-block">Customer</small>
+            <strong>{{ selectedInvoice.invoice.customer_name }}</strong>
+            <div>{{ selectedInvoice.invoice.customer_phone }}</div>
+          </div>
+          <div class="col-md-4">
+            <small class="text-muted d-block">Total</small>
+            <strong>{{ selectedInvoice.invoice.total | number:2 }}</strong>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <small class="text-muted d-block">Paid Status</small>
+            <span class="badge" ng-class="selectedInvoice.invoice._paidState ? 'text-bg-success' : 'text-bg-secondary'">
+              {{ selectedInvoice.invoice._paidState ? 'Paid' : 'Unpaid' }}
+            </span>
+          </div>
+          <div class="col-md-6">
+            <small class="text-muted d-block">Fulfillment</small>
+            <span class="badge" ng-class="selectedInvoice.invoice._fulfilledState ? 'text-bg-success' : 'text-bg-warning'">
+              {{ selectedInvoice.invoice._fulfilledState ? 'Done' : 'Pending' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="mb-3" ng-if="selectedInvoice.userNotes">
+          <small class="text-muted d-block">Notes</small>
+          <div class="border rounded p-2 bg-light">{{ selectedInvoice.userNotes }}</div>
+        </div>
+
+        <h6 class="fw-bold">Invoice Items</h6>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Medicine</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Line Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="it in selectedInvoice.items track by it.id">
+                <td>{{ it.medicine_name }}</td>
+                <td>{{ it.qty }}</td>
+                <td>{{ it.unit_price | number:2 }}</td>
+                <td>{{ it.line_total | number:2 }}</td>
+              </tr>
+              <tr ng-if="selectedInvoice.items.length === 0">
+                <td colspan="4" class="text-center text-muted py-3">No invoice items found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer d-flex justify-content-end">
+        <button class="btn btn-dark" ng-click="closeInvoiceDetails()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
