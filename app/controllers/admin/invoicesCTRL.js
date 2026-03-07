@@ -190,20 +190,22 @@ angular.module("pharmacyApp").controller("InvoicesController", [
 
       var invoiceTotal = calcTotal();
 
-      checkStockBeforeSave()
-        .then(function () {
-          return InvoicesService.createInvoice({
-            customer_id: $scope.customer.id,
-            total: invoiceTotal,
-            notes: ($scope.notes || "").trim() || null,
-          });
-        })
+      // 1) Create invoice
+      InvoicesService.createInvoice({
+        customer_id: $scope.customer.id,
+        total: invoiceTotal,
+        notes: ($scope.notes || "").trim() || null,
+      })
         .then(function (res) {
+          // 2) Get invoice ID from response
           var invoiceRow = res.data && res.data[0];
           var invoiceId = invoiceRow ? invoiceRow.id : null;
 
-          if (!invoiceId) throw new Error("Invoice ID not returned");
+          if (!invoiceId) {
+            throw new Error("Invoice ID not returned from server");
+          }
 
+          // 3) Prepare items for this invoice
           var items = [];
           for (var i = 0; i < $scope.cart.length; i++) {
             items.push({
@@ -214,13 +216,16 @@ angular.module("pharmacyApp").controller("InvoicesController", [
             });
           }
 
+          // 4) Add items to invoice
           return InvoicesService.addItems(items);
         })
         .then(function () {
+          // 5) Reduce stock for all medicines sold
           return reduceStockAfterSale();
         })
         .then(function () {
-          alert("Invoice saved!");
+          // 6) Success! Show alert and clear form
+          alert("Invoice saved successfully!");
 
           $scope.cart = [];
           $scope.medResults = [];
@@ -233,8 +238,14 @@ angular.module("pharmacyApp").controller("InvoicesController", [
           refreshTotal();
         })
         .catch(function (err) {
-          console.error("Save invoice failed:", err.status, err.data || err);
-          alert(err.message || "Failed to save invoice.");
+          console.error("Save invoice failed:", err);
+          var errorMsg = "Failed to save invoice.";
+          if (err.data && err.data.message) {
+            errorMsg = err.data.message;
+          } else if (err.message) {
+            errorMsg = err.message;
+          }
+          alert(errorMsg);
         });
     };
   },

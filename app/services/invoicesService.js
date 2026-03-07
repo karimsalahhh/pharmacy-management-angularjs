@@ -19,5 +19,17 @@ angular.module("pharmacyApp").service("InvoicesService", [
     this.addItems = function (items) {
       return $http.post(itemsUrl, items, { headers: headers });
     };
+
+    this.getAllInvoices = function () {
+      return $http.get(invoicesUrl + "?select=*&order=id.asc", {
+        headers: headers,
+      });
+    };
+
+    this.getAllItems = function () {
+      return $http.get(itemsUrl + "?select=*&order=id.asc", {
+        headers: headers,
+      });
+    };
   },
 ]);
