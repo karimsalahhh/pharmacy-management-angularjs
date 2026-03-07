@@ -30,8 +30,8 @@ angular.module("pharmacyApp").config([
         templateUrl: "app/views/admin/customers.html",
         controller: "CustomersController",
       })
-      .when("/admin/invoices", {
-        templateUrl: "app/views/admin/invoices.html",
+      .when("/admin/orders", {
+        templateUrl: "app/views/admin/orders.html",
         controller: "InvoicesController",
       })
       .when("/admin/productSearch", {
