@@ -42,30 +42,8 @@ angular.module("pharmacyApp").config([
         templateUrl: "app/views/admin/invoicesDetails.html",
         controller: "InvoicesDetailsController",
       })
-
-      // USER (basic stubs)
-      .when("/user/home", {
-        templateUrl: "app/views/user/home.html",
-        controller: "UserHomeController",
-      })
-      .when("/user/products", {
-        templateUrl: "app/views/user/products.html",
-        controller: "ProductsController",
-      })
-      .when("/user/cart", {
-        templateUrl: "app/views/user/cart.html",
-        controller: "CartController",
-      })
-      .when("/user/wishlist", {
-        templateUrl: "app/views/user/wishlist.html",
-        controller: "WishlistController",
-      })
-
-      .when("/", {
-        redirectTo: "/admin/dashboard",
-      })
-      .when("/dashboard", {
-        redirectTo: "/admin/dashboard",
+      .otherwise({
+        redirectTo: "app/views/admin/dashboard.html",
       });
   },
 ]);
