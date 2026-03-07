@@ -1,25 +1,8 @@
-// app/app.routes.js
+﻿// app/app.routes.js
 angular.module("pharmacyApp").config([
   "$routeProvider",
   function ($routeProvider) {
     $routeProvider
-<<<<<<< HEAD
-      .when("/dashboard", {
-        templateUrl: "app/views/dashboard.html",
-        controller: "dashCTRL",
-      })
-      .when("/statistics", {
-        templateUrl: "app/views/statistics.html",
-        controller: "statsCTRL",
-      })
-      .when("/medicines", {
-        templateUrl: "app/views/medicines.html",
-        controller: "medsCTRL",
-      })
-      .when("/productSearch", {
-        templateUrl: "app/views/productSearch.html",
-        controller: "prodsCTRL",
-=======
       // AUTH
       .when("/login", {
         templateUrl: "app/views/auth/login.html",
@@ -39,8 +22,8 @@ angular.module("pharmacyApp").config([
         templateUrl: "app/views/admin/statistics.html",
         controller: "StatisticsController",
       })
-      .when("/admin/meds", {
-        templateUrl: "app/views/admin/meds.html",
+      .when("/admin/medicines", {
+        templateUrl: "app/views/admin/medicines.html",
         controller: "MedicineController",
       })
       .when("/admin/customers", {
@@ -50,13 +33,16 @@ angular.module("pharmacyApp").config([
       .when("/admin/invoices", {
         templateUrl: "app/views/admin/invoices.html",
         controller: "InvoicesController",
->>>>>>> c0679cdb2554bfd280d899ae705dfb7f783ec221
+      })
+      .when("/admin/productSearch", {
+        templateUrl: "app/views/admin/productSearch.html",
+        controller: "prodsCTRL",
       })
 
-      // USER
+      // USER (basic stubs)
       .when("/user/home", {
         templateUrl: "app/views/user/home.html",
-        controller: "UserIndexController",
+        controller: "UserHomeController",
       })
       .when("/user/products", {
         templateUrl: "app/views/user/products.html",
@@ -71,13 +57,11 @@ angular.module("pharmacyApp").config([
         controller: "WishlistController",
       })
 
-      // DEFAULT
-      .otherwise({
-<<<<<<< HEAD
-        redirectTo: "/dashboard",
-=======
-        redirectTo: "/login",
->>>>>>> c0679cdb2554bfd280d899ae705dfb7f783ec221
+      .when("/", {
+        redirectTo: "/admin/dashboard",
+      })
+      .when("/dashboard", {
+        redirectTo: "/admin/dashboard",
       });
   },
 ]);

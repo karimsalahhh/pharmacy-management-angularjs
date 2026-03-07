@@ -1,7 +1,7 @@
-console.log("dashCTRL file loaded");
+console.log("DashboardController file loaded");
 
 // !This file controls the dashboard view and its calling of the data from medsService.js
-angular.module("pharmacyApp").controller("dashCTRL", [
+angular.module("pharmacyApp").controller("DashboardController", [
   "$scope",
   "MedsService",
   function ($scope, MedsService) {

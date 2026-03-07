@@ -28,21 +28,28 @@
     <script src="app/app.routes.js"></script>
 
     <!-- !Controllers -->
-    <script src="app/controller/dashCTRL.js"></script>
-    <script src="app/controller/statsCTRL.js"></script>
-    <script src="app/controller/medsCTRL.js"></script>
-    <script src="app/controller/prodsCTRL.js"></script>
+    <script src="app/controllers/admin/dashCTRL.js"></script>
+    <script src="app/controllers/admin/statsCTRL.js"></script>
+    <script src="app/controllers/admin/medsCTRL.js"></script>
+    <script src="app/controllers/admin/prodsCTRL.js"></script>
+    <script src="app/controllers/admin/customersCTRL.js"></script>
+    <script src="app/controllers/admin/invoicesCTRL.js"></script>
 
     <!-- !Services -->
     <script src="app/services/medsService.js"></script>
-    <script src="app/services/supabase.config.js"></script>
+    <script src="app/services/customersService.js"></script>
+    <script src="app/services/invoicesService.js"></script>
+    <script src="app/config/supabase.config.js"></script>
   </head>
 
   <body>
     <!-- !TOP NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-gradient navbar-dark shadow-sm">
       <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="#!/dashboard">
+        <a
+          class="navbar-brand d-flex align-items-center"
+          href="#!/admin/dashboard"
+        >
           <i class="bi bi-prescription2 me-2"></i>
           <span>Pharmacy Admin</span>
         </a>
@@ -61,23 +68,33 @@
         <div class="collapse navbar-collapse" id="mainNav">
           <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link" href="#!/dashboard">
+              <a class="nav-link" href="#!/admin/dashboard">
                 <i class="bi bi-speedometer2 me-1"></i>Dashboard
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#!/statistics">
+              <a class="nav-link" href="#!/admin/statistics">
                 <i class="bi bi-bar-chart me-1"></i>Statistics
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#!/medicines">
+              <a class="nav-link" href="#!/admin/medicines">
                 <i class="bi bi-capsule me-1"></i>Inventory
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#!/productSearch">
+              <a class="nav-link" href="#!/admin/productSearch">
                 <i class="bi bi-box-seam me-1"></i>Search
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#!/admin/customers">
+                <i class="bi bi-people me-1"></i>Customers
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#!/admin/invoices">
+                <i class="bi bi-receipt me-1"></i>Invoices
               </a>
             </li>
           </ul>
