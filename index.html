@@ -22,21 +22,23 @@
     <!-- !Angular -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-route.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- !App -->
     <script src="app/app.module.js"></script>
     <script src="app/app.routes.js"></script>
 
     <!-- !Controllers -->
+    <script src="app/controllers/appCTRL.js"></script>
+    <script src="app/controllers/auth/loginCTRL.js"></script>
     <script src="app/controllers/admin/dashCTRL.js"></script>
     <script src="app/controllers/admin/statsCTRL.js"></script>
     <script src="app/controllers/admin/medsCTRL.js"></script>
-    <script src="app/controllers/admin/prodsCTRL.js"></script>
     <script src="app/controllers/admin/customersCTRL.js"></script>
     <script src="app/controllers/admin/ordersCTRL.js"></script>
     <script src="app/controllers/admin/invoicesDetailsCTRL.js"></script>
 
     <!-- !Services -->
+    <script src="app/services/authService.js"></script>
     <script src="app/services/medsService.js"></script>
     <script src="app/services/customersService.js"></script>
     <script src="app/services/ordersService.js"></script>
@@ -44,9 +46,12 @@
     <script src="app/config/supabase.config.js"></script>
   </head>
 
-  <body>
+  <body ng-controller="AppController">
     <!-- !TOP NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-gradient navbar-dark shadow-sm">
+    <nav
+      class="navbar navbar-expand-lg navbar-gradient navbar-dark shadow-sm"
+      ng-if="showNavbar()"
+    >
       <div class="container-fluid">
         <a
           class="navbar-brand d-flex align-items-center"
@@ -116,7 +121,11 @@
                 class="dropdown-menu dropdown-menu-end"
                 aria-labelledby="userMenu"
               >
-                <li><a class="dropdown-item" href="#">Logout</a></li>
+                <li>
+                  <a class="dropdown-item" href="" ng-click="logout()"
+                    >Logout</a
+                  >
+                </li>
               </ul>
             </li>
           </ul>

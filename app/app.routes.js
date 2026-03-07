@@ -1,14 +1,11 @@
-﻿// app/app.routes.js
-angular.module("pharmacyApp").config([
+﻿angular.module("pharmacyApp").config([
   "$routeProvider",
   function ($routeProvider) {
     $routeProvider
-      // AUTH
       .when("/login", {
         templateUrl: "app/views/auth/login.html",
         controller: "LoginController",
       })
-      // ADMIN
       .when("/admin/dashboard", {
         templateUrl: "app/views/admin/dashboard.html",
         controller: "DashboardController",
@@ -29,16 +26,12 @@ angular.module("pharmacyApp").config([
         templateUrl: "app/views/admin/orders.html",
         controller: "OrdersController",
       })
-      .when("/admin/productSearch", {
-        templateUrl: "app/views/admin/productSearch.html",
-        controller: "prodsCTRL",
-      })
       .when("/admin/invoicesDetails", {
         templateUrl: "app/views/admin/invoicesDetails.html",
         controller: "InvoicesDetailsController",
       })
       .otherwise({
-        redirectTo: "app/views/admin/dashboard.html",
+        redirectTo: "/login",
       });
   },
 ]);

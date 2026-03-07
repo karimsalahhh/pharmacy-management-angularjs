@@ -25,7 +25,7 @@ angular.module("pharmacyApp").service("MedsService", [
 
     this.update = function (id, medicine) {
       return $http.patch(baseUrl + "?id=eq." + id, medicine, {
-        headers: headers,
+        headers: headers, 
       });
     };
 
