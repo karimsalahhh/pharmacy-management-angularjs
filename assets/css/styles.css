@@ -69,21 +69,21 @@ h6,
 
 .app-navbar {
   margin: 0.9rem 0.95rem 0;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.78);
-  background: linear-gradient(100deg, #ffffff 0%, #f6fbff 52%, #fff6f2 100%);
-  box-shadow: 0 12px 28px rgba(41, 97, 160, 0.14) !important;
-  backdrop-filter: blur(6px);
+  border-radius: 14px;
+  border: 1px solid #d7e1ec;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(24, 48, 77, 0.08) !important;
+  backdrop-filter: none;
 }
 
 .navbar .navbar-brand {
   font-weight: 800;
-  letter-spacing: 0.35px;
-  color: #1b3f66;
+  letter-spacing: 0.25px;
+  color: #27415f;
 }
 
 .navbar .navbar-brand i {
-  color: var(--brand);
+  color: #4c83ad;
 }
 
 .navbar .navbar-toggler {
@@ -91,38 +91,38 @@ h6,
 }
 
 .navbar .nav-link {
-  color: #355779;
-  border-radius: 10px;
+  color: #4a6078;
+  border-radius: 8px;
   font-weight: 600;
-  transition: 0.2s ease;
+  transition: 0.18s ease;
 }
 
 .navbar .nav-link:hover,
 .navbar .nav-link:focus {
-  color: #0f6ea8;
-  background: linear-gradient(90deg, #e4f6ff 0%, #f0f2ff 100%);
+  color: #2f4f70;
+  background: #f3f7fb;
 }
 
 .navbar .nav-link.active {
-  color: #0f6ea8 !important;
-  background: linear-gradient(90deg, #dff3ff 0%, #ecebff 100%);
-  border: 1px solid #c4dff0;
+  color: #22415f !important;
+  background: #ebf2f9;
+  border: 1px solid #d3e0ec;
 }
 
 .navbar .dropdown-menu {
   min-width: 9rem;
-  border: 1px solid #d2e1ef;
-  border-radius: 12px;
+  border: 1px solid #d7e1ec;
+  border-radius: 10px;
   background: #ffffff;
 }
 
 .navbar .dropdown-item {
-  color: #2f557a;
+  color: #3e5771;
 }
 
 .navbar .dropdown-item:hover {
-  color: #0c5f98;
-  background: #e8f6ff;
+  color: #24435f;
+  background: #f1f6fb;
 }
 
 .card {
