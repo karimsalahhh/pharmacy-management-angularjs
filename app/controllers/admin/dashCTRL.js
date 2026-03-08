@@ -86,6 +86,24 @@ angular.module("pharmacyApp").controller("DashboardController", [
       });
     }
 
+    $scope.setInvoiceQueueFilter = function (filter) {
+      $scope.invoiceQueueFilter = filter;
+      applyInvoiceFilter();
+    };
+
+    $scope.setAlertTab = function (tab) {
+      $scope.alertTab = tab;
+      applyAlertFilters();
+    };
+
+    $scope.onAlertSearchChange = function () {
+      applyAlertFilters();
+    };
+
+    $scope.onStockSeverityChange = function () {
+      applyAlertFilters();
+    };
+
     $scope.loadDashboard = function (forceRefresh) {
       $scope.loading = true;
       $scope.error = null;

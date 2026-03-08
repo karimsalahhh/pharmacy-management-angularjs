@@ -1,18 +1,25 @@
 <div class="container-fluid dashboard-shell">
   <section class="hero-panel mb-4">
-    <div class="d-flex flex-column flex-xl-row justify-content-between gap-3 align-items-xl-center">
+    <div
+      class="d-flex flex-column flex-xl-row justify-content-between gap-3 align-items-xl-center"
+    >
       <div>
         <p class="hero-kicker mb-2">Command Center</p>
         <h2 class="fw-bold mb-1">Operations Dashboard</h2>
         <p class="text-muted mb-0">
-          Live operational queue for invoices, stock risks, and upcoming expiries
+          Live operational queue for invoices, stock risks, and upcoming
+          expiries
         </p>
       </div>
       <div class="d-flex gap-2">
         <a href="#!/admin/orders" class="btn btn-primary">
           <i class="bi bi-plus-circle me-1"></i> New Invoice
         </a>
-        <button class="btn btn-outline-primary" ng-click="loadDashboard(true)" ng-disabled="loading">
+        <button
+          class="btn btn-outline-primary"
+          ng-click="loadDashboard(true)"
+          ng-disabled="loading"
+        >
           <i class="bi bi-arrow-repeat me-1"></i> Refresh
         </button>
       </div>
@@ -93,7 +100,10 @@
               <a href="#!/admin/orders" class="btn btn-primary">
                 <i class="bi bi-plus-circle me-2"></i>Create New Invoice
               </a>
-              <a href="#!/admin/invoicesDetails" class="btn btn-outline-secondary">
+              <a
+                href="#!/admin/invoicesDetails"
+                class="btn btn-outline-secondary"
+              >
                 <i class="bi bi-journal-richtext me-2"></i>Manage Invoices
               </a>
               <a href="#!/admin/medicines" class="btn btn-outline-secondary">
@@ -178,16 +188,42 @@
       <div class="col-12 col-xl-6">
         <div class="card h-100">
           <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3 gap-2 flex-wrap">
+            <div
+              class="d-flex justify-content-between align-items-center mb-3 gap-2 flex-wrap"
+            >
               <h5 class="mb-0">Unfulfilled Invoice Queue</h5>
               <div class="btn-group btn-group-sm" role="group">
-                <button type="button" class="btn btn-outline-secondary" ng-class="{'active': invoiceQueueFilter==='all'}" ng-click="invoiceQueueFilter='all'">All</button>
-                <button type="button" class="btn btn-outline-secondary" ng-class="{'active': invoiceQueueFilter==='unpaid'}" ng-click="invoiceQueueFilter='unpaid'">Unpaid</button>
-                <button type="button" class="btn btn-outline-secondary" ng-class="{'active': invoiceQueueFilter==='paid'}" ng-click="invoiceQueueFilter='paid'">Paid</button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  ng-class="{'active': invoiceQueueFilter==='all'}"
+                  ng-click="setInvoiceQueueFilter('all')"
+                >
+                  All
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  ng-class="{'active': invoiceQueueFilter==='unpaid'}"
+                  ng-click="setInvoiceQueueFilter('unpaid')"
+                >
+                  Unpaid
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  ng-class="{'active': invoiceQueueFilter==='paid'}"
+                  ng-click="setInvoiceQueueFilter('paid')"
+                >
+                  Paid
+                </button>
               </div>
             </div>
 
-            <div ng-if="visibleInvoices.length === 0" class="text-muted text-center py-4">
+            <div
+              ng-if="visibleInvoices.length === 0"
+              class="text-muted text-center py-4"
+            >
               No invoices for current filter.
             </div>
             <div ng-if="visibleInvoices.length > 0" class="table-responsive">
@@ -208,7 +244,10 @@
                     <td>{{ inv.customer_name }}</td>
                     <td>{{ inv.total | number:2 }}</td>
                     <td>
-                      <span class="badge" ng-class="inv.paid ? 'text-bg-success' : 'text-bg-secondary'">
+                      <span
+                        class="badge"
+                        ng-class="inv.paid ? 'text-bg-success' : 'text-bg-secondary'"
+                      >
                         {{ inv.paid ? 'Paid' : 'Unpaid' }}
                       </span>
                     </td>
@@ -223,25 +262,46 @@
       <div class="col-12 col-xl-6">
         <div class="card h-100">
           <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3 gap-2 flex-wrap">
+            <div
+              class="d-flex justify-content-between align-items-center mb-3 gap-2 flex-wrap"
+            >
               <h5 class="mb-0">Smart Alerts</h5>
               <div class="btn-group btn-group-sm" role="group">
-                <button type="button" class="btn btn-outline-primary" ng-class="{'active': alertTab==='stock'}" ng-click="alertTab='stock'">Stock</button>
-                <button type="button" class="btn btn-outline-primary" ng-class="{'active': alertTab==='expiry'}" ng-click="alertTab='expiry'">Expiry</button>
+                <button
+                  type="button"
+                  class="btn btn-outline-primary"
+                  ng-class="{'active': alertTab==='stock'}"
+                  ng-click="setAlertTab('stock')"
+                >
+                  Stock
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-primary"
+                  ng-class="{'active': alertTab==='expiry'}"
+                  ng-click="setAlertTab('expiry')"
+                >
+                  Expiry
+                </button>
               </div>
             </div>
 
             <div class="row g-2 mb-3">
-              <div class="col-12" ng-class="{'col-md-7': alertTab==='stock'}">
+              <!-- <div class="col-12" ng-class="{'col-md-7': alertTab==='stock'}">
                 <input
                   class="form-control"
                   ng-model="alertSearch"
                   ng-model-options="{debounce: 120}"
+                  ng-change="onAlertSearchChange()"
                   placeholder="Search medicine name..."
                 />
-              </div>
+              </div> -->
               <div class="col-12 col-md-5" ng-if="alertTab==='stock'">
-                <select class="form-select" ng-model="stockSeverityFilter">
+                <select
+                  class="form-select"
+                  ng-model="stockSeverityFilter"
+                  ng-change="onStockSeverityChange()"
+                >
                   <option value="all">All Severities</option>
                   <option value="critical">Out of Stock</option>
                   <option value="low">Low Stock</option>
@@ -249,7 +309,10 @@
               </div>
             </div>
 
-            <div ng-if="alertTab==='stock' && visibleStockAlerts.length === 0" class="text-muted text-center py-3">
+            <div
+              ng-if="alertTab==='stock' && visibleStockAlerts.length === 0"
+              class="text-muted text-center py-3"
+            >
               No stock alerts for current filter.
             </div>
             <div
@@ -259,14 +322,22 @@
             >
               <div>
                 <div class="fw-semibold">{{ med.name }}</div>
-                <small class="text-muted">{{ med.stock == 0 ? 'Out of Stock' : 'Low Stock' }}</small>
+                <small class="text-muted"
+                  >{{ med.stock == 0 ? 'Out of Stock' : 'Low Stock' }}</small
+                >
               </div>
-              <span class="badge" ng-class="med.stock == 0 ? 'text-bg-danger' : 'text-bg-warning'">
+              <span
+                class="badge"
+                ng-class="med.stock == 0 ? 'text-bg-danger' : 'text-bg-warning'"
+              >
                 {{ med.stock }} left
               </span>
             </div>
 
-            <div ng-if="alertTab==='expiry' && visibleExpiryAlerts.length === 0" class="text-muted text-center py-3">
+            <div
+              ng-if="alertTab==='expiry' && visibleExpiryAlerts.length === 0"
+              class="text-muted text-center py-3"
+            >
               No expiry alerts for current filter.
             </div>
             <div
@@ -276,7 +347,9 @@
             >
               <div>
                 <div class="fw-semibold">{{ med.name }}</div>
-                <small class="text-muted">Expiry: {{ med.expiry_date | date:'yyyy-MM-dd' }}</small>
+                <small class="text-muted"
+                  >Expiry: {{ med.expiry_date | date:'yyyy-MM-dd' }}</small
+                >
               </div>
               <span class="badge text-bg-info">Soon</span>
             </div>
