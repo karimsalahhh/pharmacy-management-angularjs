@@ -1,7 +1,8 @@
 angular.module("pharmacyApp").controller("CustomersController", [
   "$scope",
+  "$location",
   "CustomersService",
-  function ($scope, CustomersService) {
+  function ($scope, $location, CustomersService) {
     $scope.customers = [];
     $scope.filteredCustomers = [];
     $scope.searchText = "";
@@ -125,6 +126,11 @@ angular.module("pharmacyApp").controller("CustomersController", [
         form.$setUntouched();
         form.$submitted = false;
       }
+    };
+    $scope.openCustomerInvoices = function (customer) {
+      $location.path("/admin/invoicesDetails").search({
+        phone: customer.phone || "",
+      });
     };
 
     loadCustomers();

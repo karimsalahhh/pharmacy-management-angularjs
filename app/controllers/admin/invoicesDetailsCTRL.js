@@ -1,10 +1,18 @@
 angular.module("pharmacyApp").controller("InvoicesDetailsController", [
   "$scope",
   "$q",
+  "$location",
   "OrdersService",
   "CustomersService",
   "MedsService",
-  function ($scope, $q, OrdersService, CustomersService, MedsService) {
+  function (
+    $scope,
+    $q,
+    $location,
+    OrdersService,
+    CustomersService,
+    MedsService,
+  ) {
     $scope.invoices = [];
     $scope.loading = true;
     $scope.error = null;
@@ -18,6 +26,12 @@ angular.module("pharmacyApp").controller("InvoicesDetailsController", [
       dateFrom: "",
       dateTo: "",
     };
+    function applyRouteFilters() {
+      var phoneFromRoute = $location.search().phone || "";
+      if (phoneFromRoute) {
+        $scope.filters.query = phoneFromRoute;
+      }
+    }
 
     function toNumber(v) {
       var n = Number(v);
@@ -56,7 +70,8 @@ angular.module("pharmacyApp").controller("InvoicesDetailsController", [
         paid: !!meta.paid,
         fulfilled: !!meta.fulfilled,
       });
-      if (cleanUserNotes) return cleanUserNotes + "\n\n" + marker + "\n" + metaJson;
+      if (cleanUserNotes)
+        return cleanUserNotes + "\n\n" + marker + "\n" + metaJson;
       return marker + "\n" + metaJson;
     }
 
@@ -136,7 +151,8 @@ angular.module("pharmacyApp").controller("InvoicesDetailsController", [
       if (typeof inv.is_fulfilled === "boolean") {
         return { is_fulfilled: !inv.is_fulfilled };
       }
-      if (typeof inv.fulfilled === "boolean") return { fulfilled: !inv.fulfilled };
+      if (typeof inv.fulfilled === "boolean")
+        return { fulfilled: !inv.fulfilled };
       if (typeof inv.status === "string") {
         return {
           status: inv.status.toLowerCase() === "done" ? "pending" : "done",
@@ -155,7 +171,9 @@ angular.module("pharmacyApp").controller("InvoicesDetailsController", [
       ) {
         $scope.selectedInvoice.invoice = invoice;
         $scope.selectedInvoice.items = $scope.getInvoiceItems(invoice.id);
-        $scope.selectedInvoice.userNotes = parseInvoiceNotes(invoice.notes || "").userNotes;
+        $scope.selectedInvoice.userNotes = parseInvoiceNotes(
+          invoice.notes || "",
+        ).userNotes;
       }
     }
 
@@ -197,6 +215,7 @@ angular.module("pharmacyApp").controller("InvoicesDetailsController", [
 
           $scope.invoices = inv;
           $scope.itemsByInvoice = groupItemsByInvoice(items, medsById);
+          applyRouteFilters();
           $scope.loading = false;
         })
         .catch(function (err) {
@@ -214,11 +233,17 @@ angular.module("pharmacyApp").controller("InvoicesDetailsController", [
       var q = ($scope.filters.query || "").toLowerCase().trim();
       var paidFilter = $scope.filters.paid;
       var fulfilledFilter = $scope.filters.fulfilled;
-      var fromDate = $scope.filters.dateFrom ? new Date($scope.filters.dateFrom).getTime() : null;
-      var toDate = $scope.filters.dateTo ? new Date($scope.filters.dateTo + "T23:59:59").getTime() : null;
+      var fromDate = $scope.filters.dateFrom
+        ? new Date($scope.filters.dateFrom).getTime()
+        : null;
+      var toDate = $scope.filters.dateTo
+        ? new Date($scope.filters.dateTo + "T23:59:59").getTime()
+        : null;
 
       return $scope.invoices.filter(function (inv) {
-        var invTime = normalizeDate(inv.created_at || inv.date || inv.invoice_date);
+        var invTime = normalizeDate(
+          inv.created_at || inv.date || inv.invoice_date,
+        );
         var paidOk =
           paidFilter === "all" ||
           (paidFilter === "paid" && inv._paidState === true) ||
@@ -258,6 +283,7 @@ angular.module("pharmacyApp").controller("InvoicesDetailsController", [
         dateFrom: "",
         dateTo: "",
       };
+      $location.search("phone", null);
     };
 
     $scope.openInvoiceDetails = function (invoice) {
@@ -278,7 +304,8 @@ angular.module("pharmacyApp").controller("InvoicesDetailsController", [
 
       OrdersService.updateOrder(invoice.id, patch)
         .then(function (res) {
-          var updated = res && res.data && res.data.length > 0 ? res.data[0] : null;
+          var updated =
+            res && res.data && res.data.length > 0 ? res.data[0] : null;
           if (updated) angular.extend(invoice, updated);
           else angular.extend(invoice, patch);
 
@@ -301,7 +328,8 @@ angular.module("pharmacyApp").controller("InvoicesDetailsController", [
 
       OrdersService.updateOrder(invoice.id, patch)
         .then(function (res) {
-          var updated = res && res.data && res.data.length > 0 ? res.data[0] : null;
+          var updated =
+            res && res.data && res.data.length > 0 ? res.data[0] : null;
           if (updated) angular.extend(invoice, updated);
           else angular.extend(invoice, patch);
 
