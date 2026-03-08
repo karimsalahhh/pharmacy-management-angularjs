@@ -1,15 +1,23 @@
-<div class="container-fluid">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h2 class="fw-bold mb-1">Operations Dashboard</h2>
-      <p class="text-muted mb-0">
-        Live operational queue: stock risks, unfulfilled invoices, and daily activity
-      </p>
+<div class="container-fluid dashboard-shell">
+  <section class="hero-panel mb-4">
+    <div class="d-flex flex-column flex-xl-row justify-content-between gap-3 align-items-xl-center">
+      <div>
+        <p class="hero-kicker mb-2">Command Center</p>
+        <h2 class="fw-bold mb-1">Operations Dashboard</h2>
+        <p class="text-muted mb-0">
+          Live operational queue for invoices, stock risks, and upcoming expiries
+        </p>
+      </div>
+      <div class="d-flex gap-2">
+        <a href="#!/admin/orders" class="btn btn-primary">
+          <i class="bi bi-plus-circle me-1"></i> New Invoice
+        </a>
+        <button class="btn btn-outline-primary" ng-click="loadDashboard(true)" ng-disabled="loading">
+          <i class="bi bi-arrow-repeat me-1"></i> Refresh
+        </button>
+      </div>
     </div>
-    <button class="btn btn-outline-primary" ng-click="loadDashboard(true)" ng-disabled="loading">
-      <i class="bi bi-arrow-repeat me-1"></i> Refresh
-    </button>
-  </div>
+  </section>
 
   <div ng-if="loading" class="text-center py-5">
     <div class="spinner-border text-primary mb-3"></div>
@@ -20,39 +28,57 @@
 
   <div ng-if="!loading && !error">
     <div class="row g-4 mb-4">
-      <div class="col-12 col-md-6 col-xl-3">
-        <div class="card shadow-sm border-0 h-100">
+      <div class="col-12 col-md-6 col-xl-2">
+        <div class="card h-100 stat-card stat-danger">
           <div class="card-body">
-            <p class="text-muted mb-2">Unfulfilled Invoices</p>
-            <h3 class="fw-bold mb-2 text-danger">{{ kpis.unfulfilledCount }}</h3>
-            <small class="text-muted">Needs immediate follow-up</small>
+            <p class="text-muted mb-2">Unfulfilled</p>
+            <h3 class="fw-bold mb-1">{{ kpis.unfulfilledCount }}</h3>
+            <small class="text-muted">Need follow-up</small>
           </div>
         </div>
       </div>
-      <div class="col-12 col-md-6 col-xl-3">
-        <div class="card shadow-sm border-0 h-100">
+      <div class="col-12 col-md-6 col-xl-2">
+        <div class="card h-100 stat-card stat-ocean">
           <div class="card-body">
             <p class="text-muted mb-2">Today Revenue</p>
-            <h3 class="fw-bold mb-2">{{ kpis.todayRevenue | currency }}</h3>
-            <small class="text-muted">Cash flow for current day</small>
+            <h3 class="fw-bold mb-1">{{ kpis.todayRevenue | currency }}</h3>
+            <small class="text-muted">Current day cashflow</small>
           </div>
         </div>
       </div>
-      <div class="col-12 col-md-6 col-xl-3">
-        <div class="card shadow-sm border-0 h-100">
+      <div class="col-12 col-md-6 col-xl-2">
+        <div class="card h-100 stat-card stat-sun">
           <div class="card-body">
-            <p class="text-muted mb-2">Low/Out Stock Items</p>
-            <h3 class="fw-bold mb-2 text-warning">{{ kpis.lowStockCount }}</h3>
-            <small class="text-muted">Potential sales blockers</small>
+            <p class="text-muted mb-2">Stock Alerts</p>
+            <h3 class="fw-bold mb-1">{{ kpis.lowStockCount }}</h3>
+            <small class="text-muted">Low and out-of-stock</small>
           </div>
         </div>
       </div>
-      <div class="col-12 col-md-6 col-xl-3">
-        <div class="card shadow-sm border-0 h-100">
+      <div class="col-12 col-md-6 col-xl-2">
+        <div class="card h-100 stat-card stat-mint">
+          <div class="card-body">
+            <p class="text-muted mb-2">Today Invoices</p>
+            <h3 class="fw-bold mb-1">{{ kpis.todayInvoices }}</h3>
+            <small class="text-muted">Created today</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-xl-2">
+        <div class="card h-100 stat-card stat-violet">
           <div class="card-body">
             <p class="text-muted mb-2">Total Invoices</p>
-            <h3 class="fw-bold mb-2">{{ kpis.totalInvoices }}</h3>
-            <small class="text-muted">All-time processed orders</small>
+            <h3 class="fw-bold mb-1">{{ kpis.totalInvoices }}</h3>
+            <small class="text-muted">All-time processed</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-xl-2">
+        <div class="card h-100 stat-card stat-rose">
+          <div class="card-body">
+            <p class="text-muted mb-2">Expiring Soon</p>
+            <h3 class="fw-bold mb-1">{{ inventory.expiringSoonCount }}</h3>
+            <small class="text-muted">Within 30 days</small>
           </div>
         </div>
       </div>
@@ -60,15 +86,15 @@
 
     <div class="row g-4 mb-4">
       <div class="col-12 col-lg-4">
-        <div class="card shadow-sm border-0 h-100">
+        <div class="card h-100">
           <div class="card-body">
             <h5 class="mb-3">Quick Actions</h5>
             <div class="d-grid gap-2">
               <a href="#!/admin/orders" class="btn btn-primary">
                 <i class="bi bi-plus-circle me-2"></i>Create New Invoice
               </a>
-              <a href="#!/admin/invoicesDetails" class="btn btn-outline-dark">
-                <i class="bi bi-receipt me-2"></i>Manage Invoices Queue
+              <a href="#!/admin/invoicesDetails" class="btn btn-outline-secondary">
+                <i class="bi bi-journal-richtext me-2"></i>Manage Invoices
               </a>
               <a href="#!/admin/medicines" class="btn btn-outline-secondary">
                 <i class="bi bi-capsule me-2"></i>Manage Inventory
@@ -82,7 +108,7 @@
       </div>
 
       <div class="col-12 col-lg-8">
-        <div class="card shadow-sm border-0 h-100">
+        <div class="card h-100">
           <div class="card-body">
             <h5 class="mb-3">Inventory Health</h5>
 
@@ -150,16 +176,21 @@
 
     <div class="row g-4">
       <div class="col-12 col-xl-6">
-        <div class="card shadow-sm border-0 h-100">
+        <div class="card h-100">
           <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3 gap-2 flex-wrap">
               <h5 class="mb-0">Unfulfilled Invoice Queue</h5>
-              <a href="#!/admin/invoicesDetails" class="btn btn-sm btn-outline-dark">Open All</a>
+              <div class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-outline-secondary" ng-class="{'active': invoiceQueueFilter==='all'}" ng-click="invoiceQueueFilter='all'">All</button>
+                <button type="button" class="btn btn-outline-secondary" ng-class="{'active': invoiceQueueFilter==='unpaid'}" ng-click="invoiceQueueFilter='unpaid'">Unpaid</button>
+                <button type="button" class="btn btn-outline-secondary" ng-class="{'active': invoiceQueueFilter==='paid'}" ng-click="invoiceQueueFilter='paid'">Paid</button>
+              </div>
             </div>
-            <div ng-if="unfulfilledInvoices.length === 0" class="text-muted text-center py-4">
-              No pending invoices.
+
+            <div ng-if="visibleInvoices.length === 0" class="text-muted text-center py-4">
+              No invoices for current filter.
             </div>
-            <div ng-if="unfulfilledInvoices.length > 0" class="table-responsive">
+            <div ng-if="visibleInvoices.length > 0" class="table-responsive">
               <table class="table table-sm align-middle mb-0">
                 <thead>
                   <tr>
@@ -171,7 +202,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr ng-repeat="inv in unfulfilledInvoices track by inv.id">
+                  <tr ng-repeat="inv in visibleInvoices track by inv.id">
                     <td>#{{ inv.id }}</td>
                     <td>{{ inv.created_at | date:'yyyy-MM-dd HH:mm' }}</td>
                     <td>{{ inv.customer_name }}</td>
@@ -190,15 +221,41 @@
       </div>
 
       <div class="col-12 col-xl-6">
-        <div class="card shadow-sm border-0 h-100 mb-4">
+        <div class="card h-100">
           <div class="card-body">
-            <h5 class="mb-3">Critical Stock Alerts</h5>
-            <div ng-if="lowStockMedicines.length === 0" class="text-muted text-center py-3">
-              No stock alerts right now.
+            <div class="d-flex justify-content-between align-items-center mb-3 gap-2 flex-wrap">
+              <h5 class="mb-0">Smart Alerts</h5>
+              <div class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-outline-primary" ng-class="{'active': alertTab==='stock'}" ng-click="alertTab='stock'">Stock</button>
+                <button type="button" class="btn btn-outline-primary" ng-class="{'active': alertTab==='expiry'}" ng-click="alertTab='expiry'">Expiry</button>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-12" ng-class="{'col-md-7': alertTab==='stock'}">
+                <input
+                  class="form-control"
+                  ng-model="alertSearch"
+                  ng-model-options="{debounce: 120}"
+                  placeholder="Search medicine name..."
+                />
+              </div>
+              <div class="col-12 col-md-5" ng-if="alertTab==='stock'">
+                <select class="form-select" ng-model="stockSeverityFilter">
+                  <option value="all">All Severities</option>
+                  <option value="critical">Out of Stock</option>
+                  <option value="low">Low Stock</option>
+                </select>
+              </div>
+            </div>
+
+            <div ng-if="alertTab==='stock' && visibleStockAlerts.length === 0" class="text-muted text-center py-3">
+              No stock alerts for current filter.
             </div>
             <div
+              ng-if="alertTab==='stock'"
               class="d-flex justify-content-between align-items-center border rounded p-2 mb-2"
-              ng-repeat="med in lowStockMedicines track by med.id"
+              ng-repeat="med in visibleStockAlerts track by med.id"
             >
               <div>
                 <div class="fw-semibold">{{ med.name }}</div>
@@ -208,18 +265,14 @@
                 {{ med.stock }} left
               </span>
             </div>
-          </div>
-        </div>
 
-        <div class="card shadow-sm border-0 h-100">
-          <div class="card-body">
-            <h5 class="mb-3">Expiry Alerts (30 days)</h5>
-            <div ng-if="expiringSoonMedicines.length === 0" class="text-muted text-center py-3">
-              No expiry alerts right now.
+            <div ng-if="alertTab==='expiry' && visibleExpiryAlerts.length === 0" class="text-muted text-center py-3">
+              No expiry alerts for current filter.
             </div>
             <div
+              ng-if="alertTab==='expiry'"
               class="d-flex justify-content-between align-items-center border rounded p-2 mb-2"
-              ng-repeat="med in expiringSoonMedicines track by med.id"
+              ng-repeat="med in visibleExpiryAlerts track by med.id"
             >
               <div>
                 <div class="fw-semibold">{{ med.name }}</div>
