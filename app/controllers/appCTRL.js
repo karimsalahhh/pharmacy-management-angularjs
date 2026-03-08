@@ -7,6 +7,10 @@ angular.module("pharmacyApp").controller("AppController", [
       return $location.path() !== "/login";
     };
 
+    $scope.isActive = function (path) {
+      return $location.path() === path;
+    };
+
     $scope.logout = async function () {
       try {
         await AuthService.logout();

@@ -49,7 +49,7 @@
   <body ng-controller="AppController">
     <!-- !TOP NAVBAR -->
     <nav
-      class="navbar navbar-expand-lg navbar-gradient navbar-dark shadow-sm"
+      class="navbar navbar-expand-lg navbar-gradient navbar-dark shadow-sm sticky-top"
       ng-if="showNavbar()"
     >
       <div class="container-fluid">
@@ -75,32 +75,56 @@
         <div class="collapse navbar-collapse" id="mainNav">
           <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link" href="#!/admin/dashboard">
+              <a
+                class="nav-link"
+                ng-class="{ 'active': isActive('/admin/dashboard') }"
+                href="#!/admin/dashboard"
+              >
                 <i class="bi bi-speedometer2 me-1"></i>Dashboard
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#!/admin/statistics">
+              <a
+                class="nav-link"
+                ng-class="{ 'active': isActive('/admin/statistics') }"
+                href="#!/admin/statistics"
+              >
                 <i class="bi bi-bar-chart me-1"></i>Statistics
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#!/admin/medicines">
+              <a
+                class="nav-link"
+                ng-class="{ 'active': isActive('/admin/medicines') }"
+                href="#!/admin/medicines"
+              >
                 <i class="bi bi-capsule me-1"></i>Inventory
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#!/admin/customers">
+              <a
+                class="nav-link"
+                ng-class="{ 'active': isActive('/admin/customers') }"
+                href="#!/admin/customers"
+              >
                 <i class="bi bi-people me-1"></i>Customers
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#!/admin/orders">
+              <a
+                class="nav-link"
+                ng-class="{ 'active': isActive('/admin/orders') }"
+                href="#!/admin/orders"
+              >
                 <i class="bi bi-receipt me-1"></i>Create Order
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#!/admin/invoicesDetails">
+              <a
+                class="nav-link"
+                ng-class="{ 'active': isActive('/admin/invoicesDetails') }"
+                href="#!/admin/invoicesDetails"
+              >
                 <i class="bi bi-receipt me-1"></i>Manage Invoices
               </a>
             </li>

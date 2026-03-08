@@ -3,36 +3,78 @@ angular.module("pharmacyApp").controller("CustomersController", [
   "CustomersService",
   function ($scope, CustomersService) {
     $scope.customers = [];
-
+    $scope.filteredCustomers = [];
+    $scope.searchText = "";
+    $scope.emailFilter = "all";
     $scope.newCustomer = {
       name: "",
       phone: "",
       email: "",
     };
+    $scope.errorMessage = "";
+    $scope.successMessage = "";
+    $scope.loading = true;
 
     function loadCustomers() {
+      $scope.loading = true;
+
       CustomersService.getAll()
         .then(function (res) {
-          $scope.customers = res.data;
+          $scope.customers = res.data || [];
+          $scope.filterCustomers();
+          $scope.loading = false;
         })
         .catch(function (err) {
           console.error("Error loading customers:", err);
+          $scope.errorMessage = "Failed to load customers.";
+          $scope.loading = false;
         });
     }
 
-    function clearForm(form) {
-      $scope.newCustomer = { name: "", phone: "", email: "" };
-      if (form) {
-        form.$setPristine();
-        form.$setUntouched();
+    $scope.filterCustomers = function () {
+      var filtered = $scope.customers;
+
+      if ($scope.searchText && $scope.searchText.trim()) {
+        var searchLower = $scope.searchText.toLowerCase().trim();
+
+        filtered = filtered.filter(function (customer) {
+          var name = (customer.name || "").toLowerCase();
+          var phone = String(customer.phone || "").toLowerCase();
+          var email = (customer.email || "").toLowerCase();
+
+          return (
+            name.indexOf(searchLower) !== -1 ||
+            phone.indexOf(searchLower) !== -1 ||
+            email.indexOf(searchLower) !== -1
+          );
+        });
       }
-    }
+
+      if ($scope.emailFilter !== "all") {
+        filtered = filtered.filter(function (customer) {
+          var hasEmail = customer.email && customer.email.trim();
+
+          if ($scope.emailFilter === "withEmail") {
+            return hasEmail;
+          }
+
+          if ($scope.emailFilter === "withoutEmail") {
+            return !hasEmail;
+          }
+
+          return true;
+        });
+      }
+
+      $scope.filteredCustomers = filtered;
+    };
 
     $scope.addCustomer = function (form) {
+      $scope.errorMessage = "";
+      $scope.successMessage = "";
+
       if (form.$invalid) {
-        form.name.$setTouched();
-        form.phone.$setTouched();
-        form.email.$setTouched();
+        $scope.errorMessage = "Please fix the highlighted fields first.";
         return;
       }
 
@@ -44,11 +86,13 @@ angular.module("pharmacyApp").controller("CustomersController", [
 
       CustomersService.create(customer)
         .then(function () {
+          $scope.successMessage = "Customer added successfully.";
           loadCustomers();
-          clearForm(form);
+          $scope.resetForm(form);
         })
         .catch(function (err) {
           console.error("Error adding customer:", err);
+          $scope.errorMessage = "Failed to add customer.";
         });
     };
 
@@ -57,11 +101,30 @@ angular.module("pharmacyApp").controller("CustomersController", [
 
       CustomersService.remove(id)
         .then(function () {
+          $scope.successMessage = "Customer deleted successfully.";
           loadCustomers();
         })
         .catch(function (err) {
           console.error("Error deleting customer:", err);
+          $scope.errorMessage = "Failed to delete customer.";
         });
+    };
+
+    $scope.resetForm = function (form) {
+      $scope.newCustomer = {
+        name: "",
+        phone: "",
+        email: "",
+      };
+
+      $scope.errorMessage = "";
+      $scope.successMessage = "";
+
+      if (form) {
+        form.$setPristine();
+        form.$setUntouched();
+        form.$submitted = false;
+      }
     };
 
     loadCustomers();

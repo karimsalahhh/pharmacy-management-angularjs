@@ -76,7 +76,18 @@ h6 {
   color: #fff4d4;
   background: var(--gold-soft);
 }
+.navbar .nav-link.active {
+  color: #fff4d4 !important;
+  background: var(--gold-soft);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.08);
+}
 
+.navbar .nav-link.active:hover,
+.navbar .nav-link.active:focus {
+  color: #fff4d4 !important;
+  background: var(--gold-soft);
+}
 .navbar .dropdown-menu {
   min-width: 9rem;
   border: 1px solid #4a3a1a;

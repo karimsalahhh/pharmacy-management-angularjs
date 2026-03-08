@@ -4,114 +4,210 @@
     <p class="text-muted mb-0">Manage customer profiles and contact details</p>
   </div>
 
-  <form name="customerForm" novalidate class="card mb-4">
-    <div class="card-body">
-      <h5 class="mb-3">Add New Customer</h5>
+  <div class="row g-4">
+    <!-- Form -->
+    <div class="col-12 col-lg-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h4 class="mb-3">Add Customer</h4>
 
-      <div class="row g-3">
-        <div class="col-md-4">
-          <label class="form-label">Name</label>
-          <input
-            class="form-control"
-            placeholder="Customer name"
-            name="name"
-            ng-model="newCustomer.name"
-            required
-            ng-minlength="2"
-            ng-class="{'is-invalid': customerForm.name.$touched && customerForm.name.$invalid}"
-          />
-          <small
-            class="text-danger"
-            ng-show="customerForm.name.$touched && customerForm.name.$invalid"
-          >
-            Name is required.
-          </small>
-        </div>
+          <div class="alert alert-danger" ng-if="errorMessage">
+            {{ errorMessage }}
+          </div>
 
-        <div class="col-md-3">
-          <label class="form-label">Phone</label>
-          <input
-            class="form-control"
-            placeholder="Phone number"
-            name="phone"
-            ng-model="newCustomer.phone"
-            required
-            ng-class="{'is-invalid': customerForm.phone.$touched && customerForm.phone.$invalid}"
-          />
-          <small
-            class="text-danger"
-            ng-show="customerForm.phone.$touched && customerForm.phone.$invalid"
-          >
-            Phone is required.
-          </small>
-        </div>
+          <div class="alert alert-success" ng-if="successMessage">
+            {{ successMessage }}
+          </div>
 
-        <div class="col-md-4">
-          <label class="form-label">Email</label>
-          <input
-            class="form-control"
-            type="email"
-            placeholder="Email address"
-            name="email"
-            ng-model="newCustomer.email"
-            required
-            ng-class="{'is-invalid': customerForm.email.$touched && customerForm.email.$invalid}"
-          />
-          <small
-            class="text-danger"
-            ng-show="customerForm.email.$touched && customerForm.email.$invalid"
+          <form
+            name="customerForm"
+            ng-submit="addCustomer(customerForm)"
+            novalidate
           >
-            Enter a valid email.
-          </small>
-        </div>
+            <div class="mb-3">
+              <label class="form-label">Name</label>
+              <input
+                type="text"
+                name="name"
+                class="form-control"
+                ng-model="newCustomer.name"
+                placeholder="Enter customer name"
+                required
+                minlength="2"
+                maxlength="100"
+                ng-class="{'is-invalid': customerForm.name.$invalid && customerForm.name.$touched}"
+              />
+              <small
+                class="text-danger"
+                ng-show="customerForm.name.$error.required && customerForm.name.$touched"
+              >
+                Name is required.
+              </small>
+              <small
+                class="text-danger"
+                ng-show="customerForm.name.$error.minlength && customerForm.name.$touched"
+              >
+                Name must be at least 2 characters.
+              </small>
+              <small
+                class="text-danger"
+                ng-show="customerForm.name.$error.maxlength && customerForm.name.$touched"
+              >
+                Name must be less than 100 characters.
+              </small>
+            </div>
 
-        <div class="col-md-1 d-grid">
-          <label class="form-label d-none d-md-block">&nbsp;</label>
-          <button
-            type="button"
-            class="btn btn-primary"
-            ng-click="addCustomer(customerForm)"
-          >
-            Add
-          </button>
+            <div class="mb-3">
+              <label class="form-label">Phone</label>
+              <input
+                type="text"
+                name="phone"
+                class="form-control"
+                ng-model="newCustomer.phone"
+                placeholder="Enter phone number"
+                required
+                ng-class="{'is-invalid': customerForm.phone.$invalid && customerForm.phone.$touched}"
+              />
+              <small
+                class="text-danger"
+                ng-show="customerForm.phone.$error.required && customerForm.phone.$touched"
+              >
+                Phone is required.
+              </small>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input
+                type="email"
+                name="email"
+                class="form-control"
+                ng-model="newCustomer.email"
+                placeholder="Enter email address"
+                ng-class="{'is-invalid': customerForm.email.$invalid && customerForm.email.$touched}"
+              />
+              <small
+                class="text-danger"
+                ng-show="customerForm.email.$error.email && customerForm.email.$touched"
+              >
+                Enter a valid email.
+              </small>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button
+                type="submit"
+                class="btn btn-primary w-100"
+                ng-disabled="!customerForm.$valid"
+              >
+                Add
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-secondary"
+                ng-click="resetForm(customerForm)"
+              >
+                Clear
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
-  </form>
 
-  <div class="card">
-    <div class="card-body p-0">
-      <div class="table-responsive">
-        <table class="table table-striped mb-0">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Phone</th>
-              <th>Email</th>
-              <th style="width: 140px">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr ng-repeat="c in customers">
-              <td>{{ c.name }}</td>
-              <td>{{ c.phone }}</td>
-              <td>{{ c.email }}</td>
-              <td>
-                <button
-                  class="btn btn-sm btn-outline-danger"
-                  ng-click="deleteCustomer(c.id)"
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-            <tr ng-if="customers.length === 0">
-              <td colspan="4" class="text-center text-muted py-4">
-                No customers available.
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    <!-- Table with Search and Filter -->
+    <div class="col-12 col-lg-8">
+      <!-- Search and Filter Card -->
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-12 col-md-8">
+              <label class="form-label">Search Customers</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Type name, phone, or email..."
+                ng-model="searchText"
+                ng-change="filterCustomers()"
+              />
+            </div>
+
+            <div class="col-12 col-md-4">
+              <label class="form-label">Filter by Email</label>
+              <select
+                class="form-select"
+                ng-model="emailFilter"
+                ng-change="filterCustomers()"
+              >
+                <option value="all">All</option>
+                <option value="withEmail">With Email</option>
+                <option value="withoutEmail">Without Email</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customers Table Card -->
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">Customers List</h4>
+            <span class="badge text-bg-dark">
+              {{ filteredCustomers.length }} Customers
+            </span>
+          </div>
+
+          <div class="text-center py-4" ng-if="loading">
+            <div class="spinner-border text-primary mb-2"></div>
+            <p class="mb-0">Loading customers...</p>
+          </div>
+
+          <div class="table-responsive" ng-if="!loading">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Email</th>
+                  <th style="width: 150px">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="c in filteredCustomers track by c.id">
+                  <td>{{ $index + 1 }}</td>
+                  <td>{{ c.name }}</td>
+                  <td>{{ c.phone }}</td>
+                  <td>{{ c.email || '-' }}</td>
+                  <td>
+                    <div class="d-flex gap-2">
+                      <button
+                        class="btn btn-sm btn-outline-primary"
+                        disabled
+                      >
+                        Invoices
+                      </button>
+                      <button
+                        class="btn btn-sm btn-danger"
+                        ng-click="deleteCustomer(c.id)"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr ng-if="filteredCustomers.length === 0">
+                  <td colspan="5" class="text-center text-muted py-4">
+                    No customers found.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
